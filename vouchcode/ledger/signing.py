@@ -43,6 +43,7 @@ verified.
 from __future__ import annotations
 
 import base64
+import hashlib
 import os
 import stat
 from dataclasses import dataclass
@@ -68,6 +69,18 @@ PRIVATE_KEY_MODE = stat.S_IRUSR | stat.S_IWUSR
 # Named so that a report states which algorithm produced a signature rather than leaving
 # a verifier to infer it from the signature length.
 SIGNATURE_ALGORITHM = "ed25519"
+
+# How many hexadecimal characters of the key digest are shown in the human-comparable
+# fingerprint. Thirty-two characters is 128 bits, which is far beyond what anyone would
+# brute force to produce a colliding key, and short enough to read aloud over a phone or
+# compare against a line in a README without losing your place.
+FINGERPRINT_HEX_LENGTH = 32
+
+# Characters per group in the displayed fingerprint. Grouping is the entire reason this
+# format exists: an unbroken run of thirty-two characters is compared by skimming, which
+# is how a substituted key slips past a reader, while short groups force position-by-
+# position comparison. SSH and PGP fingerprints group for the same reason.
+FINGERPRINT_GROUP_SIZE = 4
 
 
 class SigningError(VouchcodeError):
@@ -185,6 +198,52 @@ def decode_public_key(encoded: str) -> Ed25519PublicKey:
         return Ed25519PublicKey.from_public_bytes(raw)
     except Exception as exc:
         raise SigningError(f"public key is not a valid Ed25519 key: {exc}") from exc
+
+
+def key_digest(public_key: Ed25519PublicKey) -> str:
+    """Return the full SHA-256 digest of a public key, as lowercase hexadecimal.
+
+    Computed over the raw 32 key bytes rather than over a PEM or DER container, so that
+    any implementation reaches the same digest without agreeing on a container format.
+    This is the exact form, for machine comparison.
+    """
+    raw = public_key.public_bytes(
+        encoding=serialization.Encoding.Raw,
+        format=serialization.PublicFormat.Raw,
+    )
+    return hashlib.sha256(raw).hexdigest()
+
+
+def format_fingerprint(digest: str) -> str:
+    """Render a key digest in the grouped form a person can compare.
+
+    Uppercase, grouped, and truncated. Each choice serves comparison by eye or by
+    voice: uppercase hexadecimal has fewer confusable glyph pairs than lowercase,
+    grouping stops a reader losing their position mid-string, and truncation keeps the
+    whole thing short enough that a person actually finishes checking it.
+
+    What this is for, stated plainly because overstating it would be worse than not
+    having it: this fingerprint lets a verifier compare the key that signed a report
+    against a copy of the same fingerprint obtained somewhere else. It proves nothing
+    on its own. A forged report carries a forged key, and a fingerprint that matches
+    that forged key perfectly.
+    """
+    truncated = digest[:FINGERPRINT_HEX_LENGTH].upper()
+    groups = [
+        truncated[index : index + FINGERPRINT_GROUP_SIZE]
+        for index in range(0, len(truncated), FINGERPRINT_GROUP_SIZE)
+    ]
+    return " ".join(groups)
+
+
+def key_fingerprint(public_key: Ed25519PublicKey) -> str:
+    """Return the human-comparable fingerprint of a public key."""
+    return format_fingerprint(key_digest(public_key))
+
+
+def fingerprint_from_encoded(encoded: str) -> str:
+    """Return the human-comparable fingerprint of a base64-encoded public key."""
+    return key_fingerprint(decode_public_key(encoded))
 
 
 def sign_payload(payload: bytes, private_key: Ed25519PrivateKey) -> str:
