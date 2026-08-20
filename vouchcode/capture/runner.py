@@ -39,6 +39,7 @@ from vouchcode.capture.changeset import (
     is_merge_commit,
     staged_files,
 )
+from vouchcode.capture.segmentation_pass import segment_commit
 from vouchcode.config import RepoContext, discover_repo
 from vouchcode.errors import VouchcodeError
 from vouchcode.ledger.entry import (
@@ -138,7 +139,7 @@ def run_post_commit() -> None:
         files = commit_files(repo, commit_sha)
         branch = current_branch(repo)
 
-    append_entry(ctx.ledger_path, _build_entry(repo, commit_sha, files, branch))
+    append_entry(ctx.ledger_path, _build_entry(repo, ctx, commit_sha, files, branch))
     _clear_pending(ctx)
 
 
@@ -167,13 +168,14 @@ def run_post_merge() -> None:
 
     append_entry(
         ctx.ledger_path,
-        _build_entry(repo, commit_sha, files=None, branch=current_branch(repo)),
+        _build_entry(repo, ctx, commit_sha, files=None, branch=current_branch(repo)),
     )
     _clear_pending(ctx)
 
 
 def _build_entry(
     repo: Repo,
+    ctx: RepoContext,
     commit_sha: str,
     files: list[str] | None,
     branch: str | None,
@@ -189,7 +191,7 @@ def _build_entry(
     commit = repo.commit(commit_sha)
     merge = len(commit.parents) >= 2
 
-    return LedgerEntry(
+    entry = LedgerEntry(
         commit=commit_sha,
         timestamp=utc_timestamp(),
         author_name=str(commit.author.name or ""),
@@ -199,6 +201,36 @@ def _build_entry(
         parents=commit_parents(repo, commit_sha),
         entry_type=ENTRY_TYPE_MERGE if merge else ENTRY_TYPE_COMMIT,
     )
+
+    if not merge and files:
+        _apply_segmentation(entry, repo, ctx, commit_sha, files)
+
+    return entry
+
+
+def _apply_segmentation(
+    entry: LedgerEntry,
+    repo: Repo,
+    ctx: RepoContext,
+    commit_sha: str,
+    files: list[str],
+) -> None:
+    """Run the Phase 2 segmentation and attribution pass over a commit's files.
+
+    Failure here degrades the entry rather than losing it. A commit whose segmentation
+    raised is still worth recording with its identity and file list intact, and an entry
+    that says it could not be analyzed is more useful than no entry at all. The
+    reason is recorded in the entry's skipped list so the gap shows up in a report.
+    """
+    try:
+        result = segment_commit(repo, commit_sha, ctx.vouchcode_dir, files)
+    except Exception as exc:
+        entry.skipped = [f"segmentation failed: {exc.__class__.__name__}: {exc}"]
+        return
+
+    entry.hunks = [hunk.to_dict() for hunk in result.hunks]
+    entry.attribution = result.attribution.to_dict()
+    entry.skipped = result.skipped
 
 
 def _open_repo(ctx: RepoContext) -> Repo:

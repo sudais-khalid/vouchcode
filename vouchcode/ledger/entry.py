@@ -68,6 +68,13 @@ class LedgerEntry:
     parents: list[str] = field(default_factory=list)
     entry_type: str = ENTRY_TYPE_COMMIT
     attribution: dict[str, Any] = field(default_factory=unclassified_attribution)
+    # Hunk-level segmentation results, written by Phase 2. Absent for merge commits and
+    # for commits touching no Python file, which is a different statement from present
+    # and empty: empty means the files were segmented and yielded nothing.
+    hunks: list[dict[str, Any]] | None = None
+    # Files that could not be parsed into an abstract syntax tree, recorded so that a
+    # report states what it could not analyze rather than quietly omitting it.
+    skipped: list[str] = field(default_factory=list)
 
     @property
     def is_merge(self) -> bool:
@@ -90,6 +97,8 @@ class LedgerEntry:
             "parents": list(self.parents),
             "files": None if self.files is None else list(self.files),
             "attribution": dict(self.attribution),
+            "hunks": None if self.hunks is None else [dict(h) for h in self.hunks],
+            "skipped": list(self.skipped),
         }
 
     @classmethod
@@ -107,6 +116,8 @@ class LedgerEntry:
             parents=list(data.get("parents") or []),
             entry_type=data.get("type", ENTRY_TYPE_COMMIT),
             attribution=dict(data.get("attribution") or unclassified_attribution()),
+            hunks=None if data.get("hunks") is None else list(data["hunks"]),
+            skipped=list(data.get("skipped") or []),
         )
 
     def file_count(self) -> int:
