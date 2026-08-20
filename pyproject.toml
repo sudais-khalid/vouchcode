@@ -52,6 +52,9 @@ dev = [
 
 [project.scripts]
 vouchcode = "vouchcode.cli:app"
+# Registered as a Claude Code PostToolUse hook in a target repository. See
+# vouchcode/adapters/claude_code_hook.py for the settings.json snippet.
+vouchcode-claude-hook = "vouchcode.adapters.claude_code_hook:main"
 
 [project.urls]
 Repository = "https://github.com/sudais-khalid/vouchcode"
