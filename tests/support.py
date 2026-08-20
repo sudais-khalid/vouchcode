@@ -7,8 +7,11 @@ top-level 'tests' package into site-packages, which would otherwise shadow this 
 
 from __future__ import annotations
 
+import base64
+import re
 import subprocess
 import sys
+import zlib
 from pathlib import Path
 
 # Repository under test, so that a hook running inside a temporary repository imports
@@ -62,3 +65,56 @@ def write_file(root: Path, relative: str, content: str) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
     return path
+
+
+def extract_pdf_text(pdf_path: Path) -> str:
+    """Return the visible text of a PDF, for asserting on what a reader actually sees.
+
+    ReportLab writes page content through an ASCII85 then Flate filter chain by default,
+    so a naive search of the raw bytes finds nothing and would make an empty PDF and a
+    correct one look identical. The decode order here matters and is applied with
+    fallbacks, because a stream may be filtered either way or not at all.
+
+    This parses only enough PDF to read text-showing operators. It is a test helper, not
+    a PDF library, and it is deliberately tolerant: anything it cannot decode is skipped
+    rather than raising, so one unusual stream cannot fail an assertion about another.
+    """
+    raw = pdf_path.read_bytes()
+    chunks: list[bytes] = []
+    position = 0
+
+    while True:
+        start = raw.find(b"stream", position)
+        if start < 0:
+            break
+        if raw[max(0, start - 3) : start] == b"end":
+            position = start + 6
+            continue
+
+        body_start = start + 6
+        while raw[body_start : body_start + 1] in (b"\r", b"\n"):
+            body_start += 1
+
+        end = raw.find(b"endstream", body_start)
+        if end < 0:
+            break
+
+        body = raw[body_start:end].strip()
+        if body.endswith(b"~>"):
+            body = body[:-2]
+
+        for decode in (
+            lambda data: zlib.decompress(base64.a85decode(data)),
+            zlib.decompress,
+            lambda data: data,
+        ):
+            try:
+                chunks.append(decode(body))
+                break
+            except Exception:
+                continue
+
+        position = end + 9
+
+    content = b"\n".join(chunks).decode("latin-1", errors="replace")
+    return " ".join(re.findall(r"\(([^)]*)\)", content))
