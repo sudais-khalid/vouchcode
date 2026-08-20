@@ -27,3 +27,12 @@ class HookInstallationError(VouchcodeError):
 
 class LedgerError(VouchcodeError):
     """Raised when the ledger file is unreadable, malformed, or cannot be written."""
+
+
+class SegmentationError(VouchcodeError):
+    """Raised when a source file cannot be parsed into an abstract syntax tree.
+
+    Not every Python file in a commit is parseable by the interpreter running Vouchcode.
+    A file may target a newer syntax, or carry template placeholders. That is a normal
+    condition to report and skip, not a crash.
+    """
