@@ -7,17 +7,17 @@ Output conventions, applied consistently across every command:
     diagnostics to stderr, data to stdout, so that output can be piped
     a non-zero exit code whenever the command did not do what was asked
 
-Commands available are init, status, log, verify, and uninstall. Reporting commands
-arrive with Phase 5.
+Commands: init, status, log, key, verify, report, verify-report, scan, uninstall.
 """
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
+from git import Repo
 from rich.console import Console
 
 from vouchcode import __version__
@@ -25,11 +25,26 @@ from vouchcode.capture.hooks import all_hook_statuses, install_hooks, uninstall_
 from vouchcode.config import MANAGED_HOOKS, RepoContext, discover_repo
 from vouchcode.errors import VouchcodeError
 from vouchcode.ledger.entry import LedgerEntry
-from vouchcode.ledger.store import initialize_ledger, read_entries
+from vouchcode.ledger.signing import (
+    SigningError,
+    key_digest,
+    key_fingerprint,
+    load_public_key,
+    public_key_b64,
+)
+from vouchcode.ledger.store import append_entry, initialize_ledger, read_entries
 from vouchcode.ledger.verification import (
     STATUS_UNVERIFIABLE_VERSION,
     verify_ledger,
 )
+from vouchcode.reporting.json_report import (
+    build_report,
+    read_report,
+    verify_report,
+    write_report,
+)
+from vouchcode.reporting.pdf_report import render_pdf
+from vouchcode.reporting.scan import scan_history
 
 app = typer.Typer(
     name="vouchcode",
@@ -251,6 +266,220 @@ def verify(
         )
 
     _out.print("chain intact")
+
+
+@app.command("key")
+def key_command(
+    full: Annotated[
+        bool,
+        typer.Option("--full", help="Print the complete digest and the encoded key."),
+    ] = False,
+) -> None:
+    """Print this repository's signing key fingerprint.
+
+    Publish this fingerprint somewhere a verifier can reach independently of any report
+    you send them: a repository README, a profile page, a message sent at a different
+    time. That is what makes it useful. A fingerprint a verifier only ever sees inside
+    the report it is meant to authenticate proves nothing, because a forged report
+    carries a forged key and a fingerprint matching it perfectly.
+    """
+    ctx = _context()
+
+    try:
+        ctx.require_initialized()
+        public_key = load_public_key(ctx.vouchcode_dir)
+    except (VouchcodeError, SigningError) as exc:
+        raise _fail(str(exc)) from exc
+
+    _out.print(f"fingerprint: {key_fingerprint(public_key)}")
+
+    if full:
+        _out.print(f"digest: {key_digest(public_key)}")
+        _out.print(f"public key: {public_key_b64(ctx.vouchcode_dir)}")
+
+
+@app.command()
+def report(
+    output: Annotated[
+        Path,
+        typer.Option("--output", "-o", help="Directory to write the report into."),
+    ] = Path("."),
+    name: Annotated[
+        str,
+        typer.Option("--name", help="Base filename for the generated artifacts."),
+    ] = "vouchcode-report",
+    since: Annotated[
+        str | None,
+        typer.Option("--since", help="Include commits after this commit hash."),
+    ] = None,
+    pdf: Annotated[
+        bool,
+        typer.Option("--pdf/--no-pdf", help="Also render the human-readable PDF."),
+    ] = True,
+) -> None:
+    """Compile the ledger into a signed JSON report and a PDF summary."""
+    ctx = _context()
+
+    try:
+        ctx.require_initialized()
+        entries = [entry.to_dict() for entry in read_entries(ctx.ledger_path)]
+    except VouchcodeError as exc:
+        raise _fail(str(exc)) from exc
+
+    commit_range = "full history"
+    if since:
+        selected, commit_range = _slice_since(entries, since)
+        if selected is None:
+            raise _fail(f"commit {since} is not in the ledger")
+        entries = selected
+
+    if not entries:
+        raise _fail("no ledger entries in the selected range")
+
+    try:
+        document = build_report(
+            entries,
+            ctx.vouchcode_dir,
+            repository=str(ctx.root),
+            commit_range=commit_range,
+        )
+    except (VouchcodeError, SigningError) as exc:
+        raise _fail(str(exc)) from exc
+
+    json_path = write_report(document, output / f"{name}.json")
+    _out.print(f"json report: {json_path}")
+
+    if pdf:
+        pdf_path = render_pdf(document, output / f"{name}.pdf")
+        _out.print(f"pdf report: {pdf_path}")
+
+    fingerprint = document["signing_key"]["fingerprint"]
+    _out.print(f"signing key fingerprint: {fingerprint}")
+    _out.print(
+        "publish this fingerprint where a recipient can obtain it independently of "
+        "this report, otherwise they have nothing to compare it against"
+    )
+
+
+@app.command("verify-report")
+def verify_report_command(
+    path: Annotated[Path, typer.Argument(help="Path to the JSON report to check.")],
+    expect_fingerprint: Annotated[
+        str | None,
+        typer.Option(
+            "--expect-fingerprint",
+            help="Fingerprint obtained independently of this report.",
+        ),
+    ] = None,
+) -> None:
+    """Check a report's signature, and its key against a fingerprint you already trust.
+
+    Without --expect-fingerprint this checks only that the report has not been altered
+    since signing. That is worth knowing and it is not proof of origin: a forged report
+    signed with a substitute key passes this check exactly as a genuine one does. Supply
+    a fingerprint you obtained elsewhere to check the report came from the key you
+    expected.
+    """
+    if not path.is_file():
+        raise _fail(f"no report at {path}")
+
+    try:
+        document = read_report(path)
+    except (OSError, ValueError) as exc:
+        raise _fail(f"cannot read report {path}: {exc}") from exc
+
+    result = verify_report(document, expect_fingerprint or "")
+
+    _out.print(f"report: {path}")
+    _out.print(f"signature: {'valid' if result.signature_ok else 'INVALID'}")
+    _out.print(f"key fingerprint: {result.fingerprint}")
+
+    if not result.signature_ok:
+        _err.print(f"error: {result.error or 'report signature does not verify'}")
+        raise typer.Exit(1)
+
+    if not result.fingerprint_checked:
+        _out.print("expected fingerprint: not supplied")
+        _out.print(
+            "note: the signature proves this report is unaltered, not who signed it. "
+            "rerun with --expect-fingerprint to check it against a key you trust"
+        )
+        return
+
+    _out.print(f"expected fingerprint: {result.expected_fingerprint}")
+
+    if not result.fingerprint_ok:
+        _err.print(
+            "error: key fingerprint does not match the one supplied. this report is "
+            "internally consistent but was signed by a different key than expected"
+        )
+        raise typer.Exit(1)
+
+    _out.print("fingerprint: matches")
+    _out.print("report verified and signed by the expected key")
+
+
+@app.command()
+def scan(
+    limit: Annotated[
+        int | None,
+        typer.Option("--limit", min=1, help="Scan only the newest N commits."),
+    ] = None,
+) -> None:
+    """Reconstruct a best-effort ledger from history for a repository that adopted
+    Vouchcode late.
+
+    Every entry produced is marked as retroactively scanned. Attribution comes from the
+    stylometric heuristic only, because no tool signal survives for a commit made before
+    the tool was installed, and comprehension is never scored, because a developer
+    cannot be meaningfully quizzed months later on code sitting in front of them.
+    """
+    ctx = _context()
+
+    try:
+        ctx.require_initialized()
+    except VouchcodeError as exc:
+        raise _fail(str(exc)) from exc
+
+    repo = Repo(ctx.root)
+    existing = {entry.commit for entry in read_entries(ctx.ledger_path)}
+
+    result = scan_history(repo, ctx.vouchcode_dir, limit=limit)
+
+    appended = 0
+    for entry in result.entries:
+        # Never overwrite a live capture with a reconstruction. A commit observed at the
+        # time it was made carries better evidence than anything a scan can infer.
+        if entry.commit in existing:
+            continue
+        append_entry(ctx.ledger_path, entry, ctx.vouchcode_dir)
+        appended += 1
+
+    _out.print(f"commits scanned: {result.scanned_commits}")
+    _out.print(f"entries added: {appended}")
+    _out.print(
+        f"entries skipped, already captured: {result.scanned_commits - appended}"
+    )
+
+    for skipped in result.skipped:
+        _err.print(f"warning: {skipped}")
+
+    if appended:
+        _out.print(
+            "these entries are marked as retroactively scanned and carry weaker "
+            "evidence than live capture"
+        )
+
+
+def _slice_since(
+    entries: list[dict[str, Any]],
+    since: str,
+) -> tuple[list[dict[str, Any]] | None, str]:
+    """Return the entries after a given commit, and a label describing the range."""
+    for index, entry in enumerate(entries):
+        if str(entry.get("commit", "")).startswith(since):
+            return entries[index + 1 :], f"after {since[:10]}"
+    return None, ""
 
 
 @app.command()
