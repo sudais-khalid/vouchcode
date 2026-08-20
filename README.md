@@ -21,17 +21,17 @@ second condition.
 
 ## Status
 
-Phases 1 and 2 of 6 are complete. The capture hooks, the local ledger, AST-based
-segmentation, and hunk-level attribution work. Comprehension verification, cryptographic
-signing, and reporting are not yet implemented; every module for those layers is present
-as a documented stub that raises NotImplementedError rather than silently returning a
-wrong answer.
+Phases 1, 2, and 3 of 6 are complete. The capture hooks, the local ledger, AST-based
+segmentation, hunk-level attribution, and the comprehension engine all work.
+Cryptographic signing and reporting are not yet implemented; every module for those
+layers is present as a documented stub that raises NotImplementedError rather than
+silently returning a wrong answer.
 
 | Phase | Focus | State |
 | --- | --- | --- |
 | 1 | Foundation: CLI, hook installation, raw capture into a local JSON ledger | complete |
 | 2 | Segmentation: AST-based diff segmentation and hunk-level attribution | complete |
-| 3 | Comprehension: deterministic question generation and terminal scoring | not started |
+| 3 | Comprehension: deterministic question generation and terminal scoring | complete |
 | 4 | Ledger: hash chaining and Ed25519 signatures | not started |
 | 5 | Reporting: signed JSON and PDF reports, retroactive scan | not started |
 | 6 | Evaluation and demonstration | not started |
@@ -156,6 +156,41 @@ The stylometric fallback measures whether a hunk looks like the rest of the repo
 code. It does not detect AI, no local statistic can, and it never returns a bare verdict.
 It declines to classify at all when the baseline is smaller than twelve prior definitions
 or the hunk smaller than twenty AST nodes, stating the reason instead of guessing.
+
+## Comprehension verification
+
+For each hunk attributed to AI generation, Vouchcode extracts checkable structural facts
+from the code, derives questions from them, and asks the developer to account for the
+code before the commit is sealed. Everything is derived from the standard library `ast`
+module. No language model is involved at any point.
+
+```console
+question 1 of 3: When records is None, what does this code do and why?
+answer: raises ValueError because it cannot work without records
+  correct, score 0.94: answer relates the condition to the outcome the code produces
+```
+
+Answers are scored by matching them against the specific facts of that hunk, not by
+similarity to a reference answer. The scorer has to separate three things that plain
+term-matching cannot:
+
+| Answer | Verdict | Why |
+| --- | --- | --- |
+| Relates the condition to the outcome | `correct` | Names what the code actually does. |
+| Right keywords, no claim | `shallow` | Term coverage without the grammar that connects them. |
+| Fluent but wrong outcome | `incorrect` | Asserts an outcome family the code does not produce. |
+
+A keyword-stuffed answer typically matches **more** of the code's terms than a correct
+one, which is why term overlap alone is not a usable grade. Three measurements separate
+them: whether the answer refers to the fact at all, whether it asserts the right outcome
+family, and whether it reads as an explanation rather than a word list, judged from
+function word density, the presence of a linking word, and how much of the vocabulary is
+the answer's own rather than echoed from the code.
+
+Comprehension runs in the pre-commit hook, the one place a commit can still be refused. A
+failed check refuses the commit and says so; `git commit --no-verify` records the commit
+with comprehension explicitly unverified. Merge commits are excluded by decision, and a
+commit made with no terminal attached is recorded as skipped, never as passed.
 
 ## Architecture
 

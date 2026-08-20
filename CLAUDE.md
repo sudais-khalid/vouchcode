@@ -135,6 +135,27 @@ Recorded segmentation decisions, so they are not relitigated as bugs:
 Stop and report to the user at the end of each phase. Do not begin the next phase
 automatically.
 
+Recorded comprehension decisions, so they are not relitigated as bugs:
+
+- Merge commits carry `comprehension.status = "excluded_merge"` with a rationale, never a
+  null field. Every entry states a comprehension status, including the ones never
+  evaluated, because a null reads as an oversight and an explicit status reads as a
+  decision.
+- A commit made with no terminal is recorded as `skipped_non_interactive`, never as
+  passed. A skip does not block the commit; only an actual failure does. Refusing every
+  scripted commit would push developers to disable Vouchcode, which protects nothing.
+- Answers that cannot be collected are not answers that were wrong. `isatty` is not a
+  reliable interactivity check: a hook can inherit a stdin that reports as a terminal and
+  then returns end of file immediately. Scoring the resulting empty answers as failures
+  refused commits for the tool's blind spot, and the read failing is now the signal.
+- A hunk passes only if every question passes. Averaging would let a developer answer the
+  easiest question and guess the rest.
+- Scoring must separate three cases against the same question: correct, keyword-stuffed
+  shallow, and confidently wrong. A stuffed answer usually matches more of the code's
+  terms than a correct one, so term overlap alone can never be the grade. Function word
+  density alone is not enough either: padding a keyword list with articles defeated it.
+  The composite requires a linking word and vocabulary of the answer's own as well.
+
 ## Rule 9: Tests alongside every feature
 
 Each phase needs at least one test that proves its exit criterion, not merely that the
