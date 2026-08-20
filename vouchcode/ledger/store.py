@@ -5,6 +5,15 @@ an existing entry, because the ledger's value rests on the claim that entries ar
 ever added. Phase 4 enforces that claim cryptographically with a hash chain; Phase 1
 establishes it as an invariant of this module.
 
+Amended commits produce two entries by design. 'git commit --amend' does not modify a
+commit, it creates a new one with a new hash, and the original becomes unreachable from
+any ref. Both entries therefore stay in the ledger: one for the original hash and one
+for the amended hash. This is correct rather than a defect. Removing the superseded
+entry would mean deleting from an append-only ledger, which is precisely the operation
+the hash chain in Phase 4 exists to make detectable, and it would also erase the
+evidence that an amendment took place. A reader reconciling a report against git history
+should expect ledger entries for commits that history no longer reaches.
+
 Writes are atomic. A ledger truncated by a crash midway through a write would be
 indistinguishable from a tampered ledger, so every write goes to a temporary file in the
 same directory and is then renamed over the target.

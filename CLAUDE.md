@@ -150,6 +150,24 @@ Five cooperating layers, per Section 3.2 of the research document.
 4. Ledger: the outcome of each commit, comprising attribution percentages and
    comprehension scores, is appended to a hash-chained, Ed25519-signed local ledger,
    rendering the history tamper-evident.
+
+   Recorded ledger decisions, so they are not relitigated as bugs:
+
+   - `git commit --amend` produces two entries by design, one for the original hash and
+     one for the amended hash. An amend creates a new commit rather than modifying one,
+     and the original becomes unreachable from any ref. Both entries remain, because
+     removing the superseded one would mean deleting from an append-only ledger, which
+     is the exact operation Phase 4's hash chain exists to make detectable, and it would
+     erase the evidence that an amendment happened. Expect ledger entries for commits
+     that git history no longer reaches.
+   - A merge commit is recorded with type `merge` and `files` set to null, never to an
+     empty list. Null states that no file list was computed; empty would state that the
+     merge touched nothing. Computing one would double count content the side branch's
+     own entries already record, and deciding whether conflict resolution is authored
+     work is a Phase 2 attribution question.
+   - Merge classification is by parent count (two or more), not by which hook observed
+     the commit, so a hand-resolved merge finished with `git commit` and an automatic
+     one from `git merge` are recorded identically.
 5. Reporting: on request, the ledger is compiled into a signed JSON artifact and a
    human-readable PDF summary, both independently verifiable offline. Both embed the
    public key required to verify signatures, so a recipient needs neither a Vouchcode
