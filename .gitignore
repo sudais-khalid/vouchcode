@@ -1,0 +1,31 @@
+# Vouchcode local state.
+#
+# The ledger is local, per-clone provenance state, not a shared source artifact. It is
+# untracked deliberately: the post-commit hook writes it after each commit, so a tracked
+# ledger would leave the working tree dirty immediately after every commit. The portable,
+# shareable proof is the signed report produced by the reporting layer, not this file.
+.vouchcode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.claude/
+.CLAUDE.md

@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vouchcode"
+version = "0.1.0"
+description = "Local-first cryptographic provenance and comprehension verification for AI-assisted development"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Sudais Khalid", email = "msudaiskhalid.ai@gmail.com" }]
+keywords = ["git", "provenance", "attribution", "ast", "code-review"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Version Control :: Git",
+]
+
+# Runtime dependencies are deliberately minimal and contain no AI or network
+# client of any kind. See CLAUDE.md Rule 4 and Section 3.1 of the research
+# document (zero external model dependency).
+dependencies = [
+    "typer>=0.12",
+    "rich>=13.7",
+    "GitPython>=3.1.43",
+    "cryptography>=42.0",
+    "reportlab>=4.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
+
+[project.scripts]
+vouchcode = "vouchcode.cli:app"
+
+[project.urls]
+Repository = "https://github.com/sudais-khalid/vouchcode"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vouchcode*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "RUF", # ruff-specific rules
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+warn_return_any = true
