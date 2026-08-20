@@ -84,12 +84,18 @@ def test_commit_produces_ledger_entry(temp_repo: Path, git_env: dict[str, str]) 
     assert entry["author"]["email"] == "test@example.invalid"
     assert entry["timestamp"].startswith("20")
 
-    # Phase 1 records no attribution. A non-placeholder value here means attribution
-    # logic leaked into the foundation phase.
-    assert entry["attribution"] == {
-        "status": "unclassified",
-        "source": None,
-        "confidence": None,
+    # Attribution was a fixed placeholder in Phase 1 and is populated by the Phase 2
+    # segmentation pass. What Phase 1 still owns is the shape of the record: a status
+    # from the known vocabulary, and source and confidence keys always present, so a
+    # reader never has to guess whether a classification is evidence or inference.
+    attribution = entry["attribution"]
+    assert set(attribution) >= {"status", "source", "confidence"}
+    assert attribution["status"] in {
+        "unclassified",
+        "human",
+        "ai",
+        "mixed",
+        "unchanged",
     }
 
 
