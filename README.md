@@ -21,15 +21,16 @@ second condition.
 
 ## Status
 
-Phase 1 of 6 (Foundation) is complete. The capture hooks and the local ledger work.
-Attribution, comprehension verification, cryptographic signing, and reporting are not yet
-implemented; every module for those layers is present as a documented stub that raises
-NotImplementedError rather than silently returning a wrong answer.
+Phases 1 and 2 of 6 are complete. The capture hooks, the local ledger, AST-based
+segmentation, and hunk-level attribution work. Comprehension verification, cryptographic
+signing, and reporting are not yet implemented; every module for those layers is present
+as a documented stub that raises NotImplementedError rather than silently returning a
+wrong answer.
 
 | Phase | Focus | State |
 | --- | --- | --- |
 | 1 | Foundation: CLI, hook installation, raw capture into a local JSON ledger | complete |
-| 2 | Segmentation: AST-based diff segmentation and hunk-level attribution | not started |
+| 2 | Segmentation: AST-based diff segmentation and hunk-level attribution | complete |
 | 3 | Comprehension: deterministic question generation and terminal scoring | not started |
 | 4 | Ledger: hash chaining and Ed25519 signatures | not started |
 | 5 | Reporting: signed JSON and PDF reports, retroactive scan | not started |
@@ -116,6 +117,45 @@ amendment happened.
 
 The ledger is local, per-clone state and is not tracked in git. The portable, shareable
 proof is the signed report produced by the reporting layer in Phase 5, not this file.
+
+## Segmentation and attribution
+
+Vouchcode attributes functions, not lines. Each changed Python file is parsed into an
+abstract syntax tree before and after the commit, and the two are compared structurally.
+
+The distinction that matters is between a change of name and a change of logic:
+
+| Outcome | Meaning |
+| --- | --- |
+| `renamed` | Identifier changed, body byte-identical. No new logic. |
+| `renamed_modified` | Identifier changed and the body changed, but it is still recognizably the same logic. |
+| `modified` | Same identifier, body changed. |
+| `moved` | Identical in every way except position in the file. |
+| `added`, `removed` | No counterpart in the other version. |
+
+A pure rename or a move is proven unchanged by the AST, so it is attributed
+`unchanged / structural / 1.0` and is never sent through comprehension verification. Only
+`added`, `modified`, and `renamed_modified` carry logic the developer must account for.
+
+Reformatting, comment edits, and reordering produce no hunk at all, which is the concrete
+advantage over a line diff.
+
+Attribution has three sources, and a report can always tell which one produced a result:
+
+| Source | Confidence | Meaning |
+| --- | --- | --- |
+| `structural` | 1.0 | The AST proves the logic did not change. A certainty. |
+| `tool_signal` | 1.0 | An assistant integration reported which lines it generated. Evidence. |
+| `stylometry` | below 0.75, never 1.0 | The code diverges from the developer's prior style. An inference. |
+
+Direct signals always take precedence over stylometry. Signals are JSON files any
+integration can write into `.vouchcode/signals/`; Vouchcode defines the format and reads
+it rather than hooking into any specific assistant.
+
+The stylometric fallback measures whether a hunk looks like the rest of the repository's
+code. It does not detect AI, no local statistic can, and it never returns a bare verdict.
+It declines to classify at all when the baseline is smaller than twelve prior definitions
+or the hunk smaller than twenty AST nodes, stating the reason instead of guessing.
 
 ## Architecture
 

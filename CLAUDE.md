@@ -109,7 +109,28 @@ Agreed phase boundary clarifications:
   throwaway detection code that Phase 2 must replace rather than extend.
 - Phase 2 must be tested against a renamed function specifically. Naive AST diffing
   misattributes a rename as a full rewrite, and that is the case most likely to be wrong
-  on a first implementation.
+  on a first implementation. Two strengths are required, not one: a pure rename, and a
+  rename combined with an internal variable rename. The second is where naive approaches
+  actually break, in both directions, by reporting either a full rewrite or no change.
+
+Recorded segmentation decisions, so they are not relitigated as bugs:
+
+- Attribution errs toward over-reporting change. A missed rename degrades to
+  add-plus-remove, which asks a developer to re-account for code they already understood.
+  A false rename links unrelated definitions and lets new code inherit old provenance.
+  For a tool whose output is evidence, over-reporting is the tolerable failure, and both
+  thresholds in `astdiff.py` are set with that direction in mind.
+- `RENAME_SIMILARITY_THRESHOLD` and `MIN_NODES_FOR_SIMILARITY` come from measurement, not
+  intuition. Single-expression functions all measure 9 tokens and score 0.78 to 0.89
+  against each other regardless of behavior; real functions measure 24 or more and two
+  genuinely different ones scored 0.64. Re-measure before changing either value.
+- Alpha-renaming covers only names a definition binds. Attribute names, called globals,
+  and constant values are never normalized, because calling a different method or
+  returning a different constant is a real behavioral change.
+- The stylometric path must never return a bare verdict. Confidence is always present,
+  capped below certainty, and the path declines outright when the baseline or the hunk is
+  too small. It measures divergence from a developer's prior style; it does not detect
+  AI, and no claim that it does may be added.
 
 Stop and report to the user at the end of each phase. Do not begin the next phase
 automatically.
