@@ -81,6 +81,10 @@ class LedgerEntry:
     # interpreter difference from a tampered fingerprint, and would report one as the
     # other. See vouchcode.segmentation.fingerprint.
     fingerprint_version: dict[str, Any] | None = None
+    # How this entry came to exist: observed at commit time, or reconstructed later by
+    # a retroactive scan. Reports must never present the two with equal confidence, so
+    # the distinction is recorded on the entry rather than inferred from context.
+    capture: str = "live"
     # Hash chain and signature, attached when the entry is finalized by
     # vouchcode.ledger.store.append_entry. Empty until then. See
     # vouchcode.ledger.chain for the genesis case and vouchcode.ledger.signing for the
@@ -108,6 +112,7 @@ class LedgerEntry:
         return {
             "commit": self.commit,
             "type": self.entry_type,
+            "capture": self.capture,
             "timestamp": self.timestamp,
             "author": {"name": self.author_name, "email": self.author_email},
             "branch": self.branch,
@@ -141,6 +146,7 @@ class LedgerEntry:
             files=None if raw_files is None else list(raw_files),
             parents=list(data.get("parents") or []),
             entry_type=data.get("type", ENTRY_TYPE_COMMIT),
+            capture=str(data.get("capture") or "live"),
             attribution=dict(data.get("attribution") or unclassified_attribution()),
             hunks=None if data.get("hunks") is None else list(data["hunks"]),
             fingerprint_version=(

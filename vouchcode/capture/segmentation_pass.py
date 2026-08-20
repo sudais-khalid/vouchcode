@@ -49,11 +49,11 @@ def segment_commit(
     skipped: list[str] = []
 
     for path in files:
-        if not _is_python(path):
+        if not is_python_path(path):
             continue
         try:
-            before = _read_blob(repo, f"{commit_sha}~1", path)
-            after = _read_blob(repo, commit_sha, path)
+            before = read_blob(repo, f"{commit_sha}~1", path)
+            after = read_blob(repo, commit_sha, path)
             hunks.extend(build_hunks(path, before, after))
         except SegmentationError as exc:
             # An unparseable file is recorded as skipped rather than failing the commit.
@@ -71,11 +71,11 @@ def segment_commit(
     )
 
 
-def _is_python(path: str) -> bool:
+def is_python_path(path: str) -> bool:
     return path.lower().endswith(PYTHON_SUFFIXES)
 
 
-def _read_blob(repo: Repo, rev: str, path: str) -> str:
+def read_blob(repo: Repo, rev: str, path: str) -> str:
     """Read a file's content at a revision, returning empty string when absent.
 
     Absent is the normal case twice over: a file added by this commit has no content in
@@ -110,9 +110,9 @@ def _baseline_sources(
     sources: list[str] = []
     for path in listing.splitlines():
         path = path.strip()
-        if not path or not _is_python(path) or path in exclude:
+        if not path or not is_python_path(path) or path in exclude:
             continue
-        content = _read_blob(repo, parent, path)
+        content = read_blob(repo, parent, path)
         if content.strip():
             sources.append(content)
         if len(sources) >= MAX_BASELINE_FILES:
@@ -138,13 +138,13 @@ def segment_staged(
     has_head = repo.head.is_valid()
 
     for path in files:
-        if not _is_python(path):
+        if not is_python_path(path):
             continue
         try:
-            before = _read_blob(repo, "HEAD", path) if has_head else ""
+            before = read_blob(repo, "HEAD", path) if has_head else ""
             # The empty revision prefix names the index entry, which is exactly the
             # content staged for this commit.
-            after = _read_blob(repo, "", path)
+            after = read_blob(repo, "", path)
             hunks.extend(build_hunks(path, before, after))
         except SegmentationError as exc:
             skipped.append(f"{path}: {exc}")
@@ -175,9 +175,9 @@ def _staged_baseline_sources(repo: Repo, exclude: set[str]) -> list[str]:
     sources: list[str] = []
     for path in listing.splitlines():
         path = path.strip()
-        if not path or not _is_python(path) or path in exclude:
+        if not path or not is_python_path(path) or path in exclude:
             continue
-        content = _read_blob(repo, "HEAD", path)
+        content = read_blob(repo, "HEAD", path)
         if content.strip():
             sources.append(content)
         if len(sources) >= MAX_BASELINE_FILES:
