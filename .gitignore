@@ -27,5 +27,12 @@ htmlcov/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Claude Code workspace configuration and installed skills.
+#
+# Untracked deliberately. These are development-environment settings rather than part
+# of the product, and the project keeps its tooling trail out of the public repository.
+# CLAUDE.md itself is tracked, because the engineering rules it carries apply to any
+# contributor and must survive a fresh clone.
 .claude/
-.CLAUDE.md
+CLAUDE.md
