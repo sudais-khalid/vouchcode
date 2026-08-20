@@ -21,11 +21,9 @@ second condition.
 
 ## Status
 
-Phases 1 through 4 of 6 are complete. The capture hooks, the local ledger, AST-based
-segmentation, hunk-level attribution, the comprehension engine, and the hash-chained
-Ed25519-signed ledger all work. Reporting is not yet implemented; its modules are present
-as documented stubs that raise NotImplementedError rather than silently returning a wrong
-answer.
+Phases 1 through 5 of 6 are complete. Capture, segmentation, attribution, comprehension
+verification, the hash-chained Ed25519-signed ledger, and report generation all work. What
+remains is Phase 6: self-application, demonstration, and documentation finalization.
 
 | Phase | Focus | State |
 | --- | --- | --- |
@@ -33,7 +31,7 @@ answer.
 | 2 | Segmentation: AST-based diff segmentation and hunk-level attribution | complete |
 | 3 | Comprehension: deterministic question generation and terminal scoring | complete |
 | 4 | Ledger: hash chaining and Ed25519 signatures | complete |
-| 5 | Reporting: signed JSON and PDF reports, retroactive scan | not started |
+| 5 | Reporting: signed JSON and PDF reports, retroactive scan | complete |
 | 6 | Evaluation and demonstration | not started |
 
 ## Install
@@ -77,7 +75,11 @@ Commands:
 | `vouchcode init` | Install the capture hooks and create the ledger. `--force` replaces hooks Vouchcode does not own. |
 | `vouchcode status` | Report hook state and ledger size. Exits non-zero if a hook is inactive, so it is usable in CI. |
 | `vouchcode log` | Print ledger entries. `--json` for machine-readable output, `--limit N` for the newest N. |
+| `vouchcode key` | Print the signing key fingerprint, so it can be published where a verifier can obtain it independently. |
 | `vouchcode verify` | Walk the chain, recheck every hash and signature, and report per entry. `--verbose` lists clean entries too. |
+| `vouchcode report` | Compile a signed JSON report and a PDF summary. `--since <commit>` limits the range. |
+| `vouchcode verify-report` | Check a report's signature, and with `--expect-fingerprint` its key against one you already trust. |
+| `vouchcode scan` | Reconstruct a best-effort ledger from existing history for a repository that adopted Vouchcode late. |
 | `vouchcode uninstall` | Remove the managed hooks. The ledger is retained. |
 
 ## Ledger format
@@ -235,6 +237,61 @@ passphrase, it is written owner read and write only (a no-op on Windows, where t
 inherits directory permissions), and key rotation is not supported. Signing proves a
 ledger was produced by the holder of a specific key; a verifier who needs to defend
 against key substitution must know which key to expect, per Section 6.2.
+
+## Reports, and what a signature actually proves
+
+`vouchcode report` produces a signed JSON document and a PDF summary. Both embed the
+public key and display its fingerprint.
+
+```console
+$ vouchcode report -o out
+json report: out/vouchcode-report.json
+pdf report: out/vouchcode-report.pdf
+signing key fingerprint: 0C7C B2E5 0164 3047 B5FA 619C F5F0 858F
+```
+
+A verifier checks it with `verify-report`:
+
+```console
+$ vouchcode verify-report out/vouchcode-report.json --expect-fingerprint "0C7C B2E5 ..."
+signature: valid
+key fingerprint: 0C7C B2E5 0164 3047 B5FA 619C F5F0 858F
+expected fingerprint: 0C7C B2E5 0164 3047 B5FA 619C F5F0 858F
+fingerprint: matches
+report verified and signed by the expected key
+```
+
+**The signature proves the report is unaltered. It does not prove who signed it.** Anyone
+can generate a key, write a ledger, and sign a report with it, and that report verifies
+perfectly. A forged report carries a forged key and a fingerprint that matches that forged
+key exactly.
+
+What closes the gap, partially, is comparing the fingerprint against a copy obtained
+somewhere the report author does not control. Run `vouchcode key` and publish the result
+in a repository README or profile, at a different time from any report you send. A
+verifier who compares the two is checking something real:
+
+```console
+$ vouchcode verify-report forged.json --expect-fingerprint "0C7C B2E5 ..."
+signature: valid
+key fingerprint: 9815 60FC F1A9 573E 872D 885E 955E 8BE7
+error: key fingerprint does not match the one supplied. this report is internally
+       consistent but was signed by a different key than expected
+```
+
+Without `--expect-fingerprint` that same forged report exits zero. This is a real check
+and a limited one, and the report says so on its own first page, because a verifier who
+does not know the check exists will not perform it.
+
+## Retroactive scan
+
+`vouchcode scan` reconstructs a best-effort ledger from existing history for repositories
+that adopted Vouchcode after development began. Every entry is marked
+`capture: retroactive_scan`, attribution comes from the stylometric heuristic alone, and
+comprehension is never scored: no tool signal survives for a commit made before the
+adapter existed, and a developer cannot be meaningfully quizzed months later on code
+sitting in front of them. Scanning never overwrites a live capture, and reports count
+reconstructed commits separately from observed ones.
 
 ## Architecture
 

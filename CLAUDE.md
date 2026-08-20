@@ -187,6 +187,31 @@ Recorded ledger and signing decisions, so they are not relitigated as bugs:
   either `verified` or `tampered`. It exits zero, because the ledger is sound and only
   its fingerprints are non-comparable; exiting non-zero would train readers to ignore it.
 
+Recorded reporting decisions, so they are not relitigated as bugs:
+
+- Every report displays the signing key fingerprint prominently and states, in the
+  artifact itself, that a valid signature proves the document is unaltered and does not
+  prove who signed it. The notice travels with the report because a verifier reads the
+  PDF, not this repository.
+- The fingerprint is a real check and a limited one. Do not describe it as solving key
+  substitution. A forged report carries a forged key and a fingerprint matching it
+  perfectly; the check only works when the verifier obtained a copy of the fingerprint
+  independently of the report.
+- Fingerprint comparison ignores spacing and case. Failing a verifier over whitespace
+  would teach them the check is unreliable rather than that the key is wrong.
+- Authorship percentages exclude hunks the AST proved unchanged. Counting a large rename
+  in the denominator would dilute the AI share of a mostly generated commit.
+- The comprehension pass rate covers evaluated commits only. Merges, skips, and
+  retroactive entries are reported by status and never counted as passes. A rate that
+  silently counted unevaluated commits as passes would be the most misleading number this
+  tool could produce, and an absent rate is reported as absent rather than as zero.
+- Retroactive scan entries are marked `capture: retroactive_scan`, use the stylometric
+  path only, and never carry a comprehension outcome. No tool signal survives for a commit
+  made before the adapter existed, and a developer cannot be meaningfully quizzed months
+  later on code sitting in front of them. Scanning never overwrites a live capture.
+- The JSON and the PDF render one shared summary module, so the two formats cannot drift
+  into reporting different numbers for the same range.
+
 ## Rule 9: Tests alongside every feature
 
 Each phase needs at least one test that proves its exit criterion, not merely that the
