@@ -7,8 +7,8 @@ Output conventions, applied consistently across every command:
     diagnostics to stderr, data to stdout, so that output can be piped
     a non-zero exit code whenever the command did not do what was asked
 
-Commands available in Phase 1 are init, status, log, and uninstall. Commands for later
-phases (verify, report, scan) are registered as they are implemented.
+Commands available are init, status, log, verify, and uninstall. Reporting commands
+arrive with Phase 5.
 """
 
 from __future__ import annotations
@@ -26,6 +26,10 @@ from vouchcode.config import MANAGED_HOOKS, RepoContext, discover_repo
 from vouchcode.errors import VouchcodeError
 from vouchcode.ledger.entry import LedgerEntry
 from vouchcode.ledger.store import initialize_ledger, read_entries
+from vouchcode.ledger.verification import (
+    STATUS_UNVERIFIABLE_VERSION,
+    verify_ledger,
+)
 
 app = typer.Typer(
     name="vouchcode",
@@ -177,6 +181,76 @@ def log_command(
 
     for line in format_log_table(entries):
         _out.print(line)
+
+
+@app.command()
+def verify(
+    verbose: Annotated[
+        bool,
+        typer.Option("--verbose", "-v", help="Print a line for every entry."),
+    ] = False,
+) -> None:
+    """Check the ledger's hash chain and signatures, reporting per entry.
+
+    Exit codes are distinct on purpose, because the two failure modes call for different
+    responses. An integrity failure means the record was altered and exits 1. An entry
+    that is sound but whose fingerprints cannot be compared against this interpreter
+    exits 0: nothing is wrong with the ledger, and treating it as a failure would train
+    a reader to ignore the one signal that says a report needs a second look.
+    """
+    ctx = _context()
+
+    try:
+        ctx.require_initialized()
+    except VouchcodeError as exc:
+        raise _fail(str(exc)) from exc
+
+    result = verify_ledger(ctx.ledger_path)
+
+    if result.error:
+        raise _fail(result.error)
+
+    if not result.entries:
+        _out.print("ledger is empty, nothing to verify")
+        return
+
+    if not result.public_key_present:
+        _err.print(
+            "warning: ledger carries no public key, so signatures cannot be checked"
+        )
+
+    for entry in result.entries:
+        # Every failing entry is shown. Clean entries are shown only on request, so that
+        # a healthy ledger of a thousand commits reports in one line rather than a
+        # thousand.
+        interesting = entry.status != "verified"
+        if verbose or interesting:
+            _out.print(f"{entry.index:>5}  {entry.commit[:10]}  {entry.status}")
+            if interesting:
+                _out.print(f"{'':>5}  {'':>10}  {entry.detail}")
+
+    _out.print("")
+    for status, count in sorted(result.counts().items()):
+        _out.print(f"{status}: {count}")
+
+    failure = result.first_failure
+    if failure is not None:
+        _err.print(
+            f"error: ledger integrity failed. first failure at entry {failure.index}, "
+            f"commit {failure.commit[:10]}: {failure.detail}"
+        )
+        raise typer.Exit(1)
+
+    non_comparable = result.counts().get(STATUS_UNVERIFIABLE_VERSION, 0)
+    if non_comparable:
+        # Reported on stdout, not stderr, and without a non-zero exit. This is a
+        # statement about what the ledger can prove, not a defect in it.
+        _out.print(
+            f"note: {non_comparable} entries were fingerprinted under different "
+            "conditions and cannot be compared against this interpreter"
+        )
+
+    _out.print("chain intact")
 
 
 @app.command()
