@@ -39,24 +39,25 @@ NotImplementedError rather than silently returning a wrong answer.
 
 Requires Python 3.10 or newer and git.
 
-```
+```sh
 pip install -e ".[dev]"
 ```
 
 ## Use
 
-```
+```sh
 cd your-repository
 vouchcode init
 ```
 
-`init` installs a pre-commit and a post-commit hook and creates `.vouchcode/ledger.json`.
-From that point every commit appends an entry.
+`init` installs the capture hooks and creates `.vouchcode/ledger.json`. From that point
+every commit appends an entry.
 
-```
+```console
 $ vouchcode init
 hook installed: .git/hooks/pre-commit
 hook installed: .git/hooks/post-commit
+hook installed: .git/hooks/post-merge
 ledger ready: .vouchcode/ledger.json
 initialized: /home/dev/your-repository
 
@@ -64,8 +65,8 @@ $ git commit -m "Add parser"
 [main 4edeb29] Add parser
 
 $ vouchcode log
-commit      timestamp                  attribution   files  author
-4edeb29b7f  2026-08-20T08:15:48+00:00  unclassified      1  Sudais Khalid
+commit      type    timestamp                  attribution   files  author
+4edeb29b7f  commit  2026-08-20T08:15:48+00:00  unclassified      1  Sudais Khalid
 ```
 
 Commands:
@@ -88,15 +89,30 @@ set, and leaves attribution unclassified because no attribution has been attempt
   "entries": [
     {
       "commit": "ab801c54fb68474370236b74460777e790ed7d69",
+      "type": "commit",
       "timestamp": "2026-08-20T08:14:11+00:00",
       "author": { "name": "Sudais Khalid", "email": "msudaiskhalid.ai@gmail.com" },
       "branch": "main",
+      "parents": ["09c50f38c7a1b4e0d2f6a8c3b5e7d9f1a2c4e6b8"],
       "files": ["parser.py"],
       "attribution": { "status": "unclassified", "source": null, "confidence": null }
     }
   ]
 }
 ```
+
+A merge commit is recorded with `"type": "merge"` and `"files": null`. Null states that no
+file list was computed, where an empty list would state that the merge touched nothing.
+Computing one would double count content the side branch's own entries already record, and
+deciding whether conflict resolution counts as authored work is a Phase 2 attribution
+question.
+
+`git commit --amend` leaves two entries, one for the original hash and one for the amended
+hash. An amend creates a new commit rather than modifying one, so the original becomes
+unreachable from git history while remaining in the ledger. This is correct for an
+append-only ledger: removing the superseded entry would be a deletion from a log whose
+whole value is that entries are only ever added, and it would erase the evidence that an
+amendment happened.
 
 The ledger is local, per-clone state and is not tracked in git. The portable, shareable
 proof is the signed report produced by the reporting layer in Phase 5, not this file.
@@ -125,10 +141,17 @@ architectural constraint rather than a preference.
 
 ## Design decisions
 
-Two hooks rather than one. The pre-commit hook records the staged change set while the
-index still describes it; the post-commit hook resolves the commit hash that exists only
-once the commit is written. Neither hook alone can observe both facts. Pre-commit is also
-where Phase 3 will gate a commit on comprehension.
+Three hooks. The pre-commit hook records the staged change set while the index still
+describes it; the post-commit hook resolves the commit hash that exists only once the
+commit is written. Neither alone can observe both facts. Pre-commit is also where Phase 3
+will gate a commit on comprehension.
+
+The post-merge hook exists because git does not run the commit hooks for a merge commit it
+creates itself, so `git merge --no-ff` would otherwise leave a commit in history with no
+ledger entry. A silent gap in a provenance ledger is worse than a coarse record. Merge
+classification is by parent count rather than by which hook observed the commit, so a
+hand-resolved merge finished with `git commit` and an automatic one are recorded
+identically.
 
 Capture never blocks a commit in Phase 1. A provenance tool that rejects a developer's
 commit because of a bug in its own recording logic is worse than one that records nothing,
@@ -147,7 +170,7 @@ overwrite it unless `--force` is given.
 
 ## Development
 
-```
+```sh
 pip install -e ".[dev]"
 pytest
 ruff check .
@@ -159,8 +182,15 @@ Tests drive real git repositories in temporary directories rather than mocking g
 because each phase's exit criterion is a claim about what happens when git actually runs a
 hook.
 
-Contributor rules and phase discipline are in [CLAUDE.md](CLAUDE.md). The full system
-design, methodology, threat model, and evaluation strategy are in
+CI runs the same four commands on every push and pull request, across Python 3.10 through
+3.13 on Linux and Python 3.12 on Windows. Windows is in the matrix deliberately: the
+capture layer writes hook scripts with forced LF line endings and an absolute interpreter
+path because git for Windows runs hooks through sh, and that path needs a real runner to
+stay honest. `ruff` and `mypy` are pinned to exact versions in `pyproject.toml` so that a
+build's result depends on the diff under review rather than on upstream release dates. A
+separate non-blocking job runs `pip-audit` against the dependency tree.
+
+The full system design, methodology, threat model, and evaluation strategy are in
 `Documentation/Vouchcode_Research_Documentation.docx`.
 
 ## License

@@ -218,3 +218,179 @@ def test_commands_outside_a_repository_fail_cleanly(
     assert result.returncode != 0
     assert "not a git repository" in result.stderr
     assert "Traceback" not in result.stderr
+
+
+def test_merge_commit_is_recorded(temp_repo: Path, git_env: dict[str, str]) -> None:
+    """A merge commit created by git appears in the ledger with its parent hashes.
+
+    Git does not run the commit hooks for a merge commit it creates itself, so without
+    the post-merge hook this commit would be absent and the ledger would carry a silent
+    gap in history. Asserts on the recorded parents so that a hook which fires but
+    records the wrong commit fails.
+    """
+    run_vouchcode(["init"], cwd=temp_repo, env=git_env)
+    _commit(temp_repo, git_env, "base.py", "BASE = 1\n", "Add base")
+
+    run_git(["checkout", "-b", "side"], cwd=temp_repo, env=git_env)
+    side = _commit(temp_repo, git_env, "side.py", "SIDE = 1\n", "Add side")
+
+    run_git(["checkout", "main"], cwd=temp_repo, env=git_env)
+    mainline = _commit(temp_repo, git_env, "main.py", "MAIN = 1\n", "Add main")
+
+    run_git(
+        ["merge", "--no-ff", "side", "-m", "Merge side"], cwd=temp_repo, env=git_env
+    )
+    merge_sha = run_git(
+        ["rev-parse", "HEAD"], cwd=temp_repo, env=git_env
+    ).stdout.strip()
+
+    entries = _ledger(temp_repo)["entries"]
+    recorded = {entry["commit"]: entry for entry in entries}
+
+    assert merge_sha in recorded, "merge commit is missing from the ledger"
+
+    merge_entry = recorded[merge_sha]
+    assert merge_entry["type"] == "merge"
+    assert merge_entry["parents"] == [mainline, side], (
+        "merge parents must be recorded in git's own order, first parent first"
+    )
+
+    # Null rather than an empty list. Null states that no file list was computed;
+    # empty would state that the merge touched nothing.
+    assert merge_entry["files"] is None
+
+    # Exactly one entry per commit, with no duplicate for the merge.
+    assert len(entries) == len(recorded) == 4
+
+
+def test_ordinary_commit_records_type_and_parents(
+    temp_repo: Path, git_env: dict[str, str]
+) -> None:
+    """A non-merge commit is typed as a commit and records its single parent."""
+    run_vouchcode(["init"], cwd=temp_repo, env=git_env)
+    first = _commit(temp_repo, git_env, "a.py", "A = 1\n", "Add a")
+    second = _commit(temp_repo, git_env, "b.py", "B = 2\n", "Add b")
+
+    entries = _ledger(temp_repo)["entries"]
+
+    assert entries[0]["type"] == "commit"
+    assert entries[0]["parents"] == [], "the first commit of a repository has no parent"
+    assert entries[1]["type"] == "commit"
+    assert entries[1]["parents"] == [first]
+    assert entries[1]["commit"] == second
+
+
+def test_fast_forward_merge_adds_no_duplicate_entry(
+    temp_repo: Path, git_env: dict[str, str]
+) -> None:
+    """post-merge must ignore a fast-forward, which creates no commit.
+
+    Without the parent-count guard, post-merge would append a second entry for a commit
+    that was already recorded when it was made.
+    """
+    run_vouchcode(["init"], cwd=temp_repo, env=git_env)
+    _commit(temp_repo, git_env, "base.py", "BASE = 1\n", "Add base")
+
+    run_git(["checkout", "-b", "side"], cwd=temp_repo, env=git_env)
+    side = _commit(temp_repo, git_env, "side.py", "SIDE = 1\n", "Add side")
+
+    run_git(["checkout", "main"], cwd=temp_repo, env=git_env)
+    run_git(["merge", "--ff-only", "side"], cwd=temp_repo, env=git_env)
+
+    entries = _ledger(temp_repo)["entries"]
+    commits = [entry["commit"] for entry in entries]
+
+    assert len(commits) == len(set(commits)) == 2
+    assert commits[-1] == side
+    assert all(entry["type"] == "commit" for entry in entries)
+
+
+def test_amend_keeps_both_entries(temp_repo: Path, git_env: dict[str, str]) -> None:
+    """An amended commit leaves the superseded entry in place, by design.
+
+    An amend creates a new commit rather than modifying one, and the original becomes
+    unreachable from any ref. Deleting the superseded entry would mean removing from an
+    append-only ledger and would erase the evidence that an amendment happened.
+    """
+    run_vouchcode(["init"], cwd=temp_repo, env=git_env)
+    original = _commit(temp_repo, git_env, "a.py", "A = 1\n", "Add a")
+
+    write_file(temp_repo, "a.py", "A = 2\n")
+    run_git(["add", "a.py"], cwd=temp_repo, env=git_env)
+    run_git(["commit", "--amend", "-m", "Add a, corrected"], cwd=temp_repo, env=git_env)
+    amended = run_git(["rev-parse", "HEAD"], cwd=temp_repo, env=git_env).stdout.strip()
+
+    commits = [entry["commit"] for entry in _ledger(temp_repo)["entries"]]
+
+    assert commits == [original, amended]
+    assert original != amended
+
+
+def test_log_output_is_ascii_and_untruncated(
+    temp_repo: Path, git_env: dict[str, str]
+) -> None:
+    """log must never truncate a timestamp or emit a non-ASCII character.
+
+    A width-sized table truncates with a Unicode ellipsis that a legacy console code
+    page cannot encode, which corrupts the displayed timestamp. Asserting on the
+    characters is what catches that, since a rendered string alone would hide it.
+    """
+    run_vouchcode(["init"], cwd=temp_repo, env=git_env)
+    _commit(temp_repo, git_env, "a.py", "A = 1\n", "Add a")
+
+    env = dict(git_env)
+    # Force a narrow console, which is what triggers truncation in a width-sized table.
+    env["COLUMNS"] = "40"
+
+    result = run_vouchcode(["log"], cwd=temp_repo, env=env)
+    assert result.returncode == 0, result.stderr
+
+    assert all(ord(ch) < 128 for ch in result.stdout), (
+        "log emitted a non-ASCII character"
+    )
+
+    entry = _ledger(temp_repo)["entries"][0]
+    assert entry["timestamp"] in result.stdout, "timestamp was truncated in log output"
+
+
+def test_log_table_marks_merge_files_with_a_dash() -> None:
+    """A merge renders its files cell as a dash, not as zero.
+
+    Zero would assert that the merge touched nothing. A dash states that no file list
+    was computed, which is what a null files field means.
+    """
+    from vouchcode.cli import format_log_table
+    from vouchcode.ledger.entry import ENTRY_TYPE_MERGE, LedgerEntry
+
+    lines = format_log_table(
+        [
+            LedgerEntry(
+                commit="a" * 40,
+                timestamp="2026-08-20T00:00:00+00:00",
+                author_name="Sudais Khalid",
+                author_email="dev@example.invalid",
+                branch="main",
+                files=None,
+                parents=["b" * 40, "c" * 40],
+                entry_type=ENTRY_TYPE_MERGE,
+            )
+        ]
+    )
+
+    assert lines[0].split() == [
+        "commit",
+        "type",
+        "timestamp",
+        "attribution",
+        "files",
+        "author",
+    ]
+    assert lines[1].split() == [
+        "a" * 10,
+        "merge",
+        "2026-08-20T00:00:00+00:00",
+        "unclassified",
+        "-",
+        "Sudais",
+        "Khalid",
+    ]

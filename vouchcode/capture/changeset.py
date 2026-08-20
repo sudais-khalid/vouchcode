@@ -62,6 +62,26 @@ def current_branch(repo: Repo) -> str | None:
     return repo.active_branch.name
 
 
+def commit_parents(repo: Repo, rev: str = "HEAD") -> list[str]:
+    """Return the full hashes of a commit's parents, in git's own order.
+
+    Order matters: the first parent is the branch that was merged into, and Phase 2 will
+    need that distinction to reason about which side of a merge introduced what.
+    """
+    return [parent.hexsha for parent in repo.commit(rev).parents]
+
+
+def is_merge_commit(repo: Repo, rev: str = "HEAD") -> bool:
+    """Return whether a commit has two or more parents.
+
+    Parent count, not the hook that observed it, is what makes a commit a merge. A merge
+    resolved by hand and finished with 'git commit' arrives through the post-commit path
+    while an automatic one arrives through post-merge, and both must be recorded the
+    same way.
+    """
+    return len(repo.commit(rev).parents) >= 2
+
+
 def _has_commits(repo: Repo) -> bool:
     """Return whether HEAD resolves to a commit.
 

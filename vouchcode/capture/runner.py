@@ -14,6 +14,12 @@ Two-stage capture. pre-commit writes the staged file list to .vouchcode/pending.
 because the index describing the commit is gone by the time post-commit runs.
 post-commit consumes that record, pairs it with the now-known commit hash, appends a
 ledger entry, and clears the pending file.
+
+Three hooks, not two. Git does not run the commit hooks for a merge commit it creates
+itself, so 'git merge --no-ff' would otherwise leave a commit in history with no ledger
+entry. post-merge closes that gap. It fires for fast-forward merges and pulls as well,
+which create no commit, so the handler records only when HEAD is an unrecorded merge
+commit.
 """
 
 from __future__ import annotations
@@ -27,17 +33,25 @@ from git import Repo
 
 from vouchcode.capture.changeset import (
     commit_files,
+    commit_parents,
     current_branch,
     head_commit_sha,
+    is_merge_commit,
     staged_files,
 )
 from vouchcode.config import RepoContext, discover_repo
 from vouchcode.errors import VouchcodeError
-from vouchcode.ledger.entry import LedgerEntry, utc_timestamp
+from vouchcode.ledger.entry import (
+    ENTRY_TYPE_COMMIT,
+    ENTRY_TYPE_MERGE,
+    LedgerEntry,
+    utc_timestamp,
+)
 from vouchcode.ledger.store import append_entry, contains_commit
 
 PRE_COMMIT = "pre-commit"
 POST_COMMIT = "post-commit"
+POST_MERGE = "post-merge"
 
 _PREFIX = "vouchcode:"
 
@@ -50,7 +64,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     event = args[0]
-    handlers = {PRE_COMMIT: run_pre_commit, POST_COMMIT: run_post_commit}
+    handlers = {
+        PRE_COMMIT: run_pre_commit,
+        POST_COMMIT: run_post_commit,
+        POST_MERGE: run_post_merge,
+    }
     handler = handlers.get(event)
     if handler is None:
         _warn(f"unknown hook event '{event}'")
@@ -111,7 +129,7 @@ def run_post_commit() -> None:
         return
 
     if pending is not None and pending.get("files"):
-        files = list(pending["files"])
+        files: list[str] | None = list(pending["files"])
         branch = pending.get("branch")
     else:
         # No usable pre-commit record. This is the normal path for a commit made with
@@ -120,18 +138,67 @@ def run_post_commit() -> None:
         files = commit_files(repo, commit_sha)
         branch = current_branch(repo)
 
+    append_entry(ctx.ledger_path, _build_entry(repo, commit_sha, files, branch))
+    _clear_pending(ctx)
+
+
+def run_post_merge() -> None:
+    """Record a merge commit that git created without running the commit hooks.
+
+    post-merge also fires for fast-forward merges and for pulls that create no commit at
+    all, so the handler records only when HEAD is a merge commit that is not already in
+    the ledger. Both guards are load bearing: without the parent-count check a
+    fast-forward would append a duplicate entry for someone else's commit, and without
+    the ledger check a hand-resolved merge already recorded by post-commit would be
+    appended twice.
+    """
+    ctx = discover_repo()
+    if not ctx.is_initialized:
+        return
+
+    repo = _open_repo(ctx)
+    commit_sha = head_commit_sha(repo)
+
+    if not is_merge_commit(repo, commit_sha):
+        return
+
+    if contains_commit(ctx.ledger_path, commit_sha):
+        return
+
+    append_entry(
+        ctx.ledger_path,
+        _build_entry(repo, commit_sha, files=None, branch=current_branch(repo)),
+    )
+    _clear_pending(ctx)
+
+
+def _build_entry(
+    repo: Repo,
+    commit_sha: str,
+    files: list[str] | None,
+    branch: str | None,
+) -> LedgerEntry:
+    """Assemble a ledger entry, classifying merges by parent count.
+
+    Classification lives here rather than in either hook handler so that a merge is
+    recorded identically whether git produced it automatically (post-merge) or the
+    developer resolved conflicts and finished it by hand (post-commit). The files
+    argument is discarded for a merge: see the merge note in vouchcode.ledger.entry for
+    why a merge carries no file list in Phase 1.
+    """
     commit = repo.commit(commit_sha)
-    entry = LedgerEntry(
+    merge = len(commit.parents) >= 2
+
+    return LedgerEntry(
         commit=commit_sha,
         timestamp=utc_timestamp(),
         author_name=str(commit.author.name or ""),
         author_email=str(commit.author.email or ""),
         branch=branch,
-        files=files,
+        files=None if merge else files,
+        parents=commit_parents(repo, commit_sha),
+        entry_type=ENTRY_TYPE_MERGE if merge else ENTRY_TYPE_COMMIT,
     )
-
-    append_entry(ctx.ledger_path, entry)
-    _clear_pending(ctx)
 
 
 def _open_repo(ctx: RepoContext) -> Repo:

@@ -19,12 +19,12 @@ from typing import Annotated
 
 import typer
 from rich.console import Console
-from rich.table import Table
 
 from vouchcode import __version__
 from vouchcode.capture.hooks import all_hook_statuses, install_hooks, uninstall_hooks
 from vouchcode.config import MANAGED_HOOKS, RepoContext, discover_repo
 from vouchcode.errors import VouchcodeError
+from vouchcode.ledger.entry import LedgerEntry
 from vouchcode.ledger.store import initialize_ledger, read_entries
 
 app = typer.Typer(
@@ -175,23 +175,8 @@ def log_command(
         _out.print("ledger is empty")
         return
 
-    table = Table(box=None, pad_edge=False, show_edge=False)
-    table.add_column("commit", style="bold")
-    table.add_column("timestamp")
-    table.add_column("attribution")
-    table.add_column("files", justify="right")
-    table.add_column("author")
-
-    for entry in entries:
-        table.add_row(
-            entry.commit[:10],
-            entry.timestamp,
-            str(entry.attribution.get("status", "unclassified")),
-            str(len(entry.files)),
-            entry.author_name,
-        )
-
-    _out.print(table)
+    for line in format_log_table(entries):
+        _out.print(line)
 
 
 @app.command()
@@ -211,6 +196,49 @@ def uninstall() -> None:
             _out.print(f"hook left in place, not owned by vouchcode: {hook.path}")
 
     _out.print(f"ledger retained: {_display(ctx, ctx.ledger_path)}")
+
+
+def format_log_table(entries: list[LedgerEntry]) -> list[str]:
+    """Render ledger entries as aligned plain-text rows, one string per line.
+
+    Deliberately not a Rich table. A table sized to the terminal truncates the timestamp
+    column in a narrow window, and Rich marks the truncation with a Unicode ellipsis
+    that does not survive a console using a legacy code page, so a commit timestamp
+    could display corrupted. Columns are sized to their contents instead: a long line
+    wraps in the terminal rather than losing characters, and output stays ASCII.
+
+    Returned as a list rather than printed so that the layout is testable without
+    capturing a console.
+    """
+    headers = ("commit", "type", "timestamp", "attribution", "files", "author")
+    rows: list[tuple[str, ...]] = [headers]
+
+    for entry in entries:
+        rows.append(
+            (
+                entry.commit[:10],
+                entry.entry_type,
+                entry.timestamp,
+                str(entry.attribution.get("status", "unclassified")),
+                # A merge carries no file list at all, which is a different statement
+                # from carrying an empty one, so it renders as a dash, not as zero.
+                "-" if entry.files is None else str(len(entry.files)),
+                entry.author_name,
+            )
+        )
+
+    widths = [max(len(row[i]) for row in rows) for i in range(len(headers))]
+    # The files column is a count and reads correctly only when right aligned.
+    right_aligned = {headers.index("files")}
+
+    lines = []
+    for row in rows:
+        cells = [
+            cell.rjust(widths[i]) if i in right_aligned else cell.ljust(widths[i])
+            for i, cell in enumerate(row)
+        ]
+        lines.append("  ".join(cells).rstrip())
+    return lines
 
 
 def _display(ctx: RepoContext, path: Path) -> str:

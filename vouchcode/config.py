@@ -26,7 +26,11 @@ LEDGER_SCHEMA_VERSION = 1
 # Hooks Vouchcode installs and owns. pre-commit captures the staged change set while it
 # is still staged; post-commit resolves the resulting commit hash and writes the ledger
 # entry. Both are required, because neither hook alone can observe both facts.
-MANAGED_HOOKS: tuple[str, ...] = ("pre-commit", "post-commit")
+#
+# post-merge exists because git does not run the commit hooks for a merge commit it
+# creates itself. Without it, 'git merge --no-ff' leaves a commit in history with no
+# ledger entry, and a silent gap in a provenance ledger is worse than a coarse record.
+MANAGED_HOOKS: tuple[str, ...] = ("pre-commit", "post-commit", "post-merge")
 
 # Marker line embedded in every generated hook. Its presence identifies a hook as
 # Vouchcode-owned and therefore safe to overwrite on reinstall. Its absence means the
