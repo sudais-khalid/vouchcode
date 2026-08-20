@@ -12,7 +12,8 @@ Field lifecycle:
     attribution.status / source / confidence   Phase 2, written by the segmentation and
                                                attribution pass.
     hunks                                      Phase 2.
-    comprehension                              Phase 3.
+    comprehension.status / rationale           Phase 2 records the exclusion decision;
+                                               Phase 3 records the outcome.
     previous_hash, entry_hash, signature       Phase 4.
 
 Merge commits. An entry whose type is "merge" carries files as null rather than as a
@@ -75,6 +76,10 @@ class LedgerEntry:
     # Files that could not be parsed into an abstract syntax tree, recorded so that a
     # report states what it could not analyze rather than quietly omitting it.
     skipped: list[str] = field(default_factory=list)
+    # Comprehension outcome, always present and never null. An entry that was not
+    # evaluated says so with a rationale rather than leaving an empty field that reads
+    # like an oversight. See vouchcode.comprehension.eligibility for the vocabulary.
+    comprehension: dict[str, Any] = field(default_factory=dict)
 
     @property
     def is_merge(self) -> bool:
@@ -99,6 +104,7 @@ class LedgerEntry:
             "attribution": dict(self.attribution),
             "hunks": None if self.hunks is None else [dict(h) for h in self.hunks],
             "skipped": list(self.skipped),
+            "comprehension": dict(self.comprehension),
         }
 
     @classmethod
@@ -118,6 +124,7 @@ class LedgerEntry:
             attribution=dict(data.get("attribution") or unclassified_attribution()),
             hunks=None if data.get("hunks") is None else list(data["hunks"]),
             skipped=list(data.get("skipped") or []),
+            comprehension=dict(data.get("comprehension") or {}),
         )
 
     def file_count(self) -> int:

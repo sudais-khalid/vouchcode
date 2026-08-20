@@ -40,6 +40,12 @@ from vouchcode.capture.changeset import (
     staged_files,
 )
 from vouchcode.capture.segmentation_pass import segment_commit
+from vouchcode.comprehension.eligibility import (
+    COMPREHENSION_EXCLUDED_MERGE,
+    MERGE_RATIONALE,
+    comprehension_record,
+    evaluate_gate,
+)
 from vouchcode.config import RepoContext, discover_repo
 from vouchcode.errors import VouchcodeError
 from vouchcode.ledger.entry import (
@@ -202,7 +208,16 @@ def _build_entry(
         entry_type=ENTRY_TYPE_MERGE if merge else ENTRY_TYPE_COMMIT,
     )
 
-    if not merge and files:
+    if merge:
+        # Stated on the entry rather than left empty. A merge is excluded from
+        # comprehension by decision, and the ledger must say so explicitly so that a
+        # report reader can tell a considered exclusion from an unevaluated gap.
+        entry.comprehension = comprehension_record(
+            COMPREHENSION_EXCLUDED_MERGE, MERGE_RATIONALE
+        )
+        return entry
+
+    if files:
         _apply_segmentation(entry, repo, ctx, commit_sha, files)
 
     return entry
@@ -231,6 +246,11 @@ def _apply_segmentation(
     entry.hunks = [hunk.to_dict() for hunk in result.hunks]
     entry.attribution = result.attribution.to_dict()
     entry.skipped = result.skipped
+
+    # The gate decides what the comprehension engine would question and records why when
+    # the answer is nothing. Phase 3 replaces this record with an actual outcome when
+    # eligible hunks exist.
+    _eligible, entry.comprehension = evaluate_gate(entry.entry_type, result.hunks)
 
 
 def _open_repo(ctx: RepoContext) -> Repo:
