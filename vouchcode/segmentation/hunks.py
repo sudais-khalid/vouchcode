@@ -29,6 +29,7 @@ from vouchcode.segmentation.astdiff import (
     DefinitionChange,
     diff_sources,
 )
+from vouchcode.segmentation.fingerprint import compute_fingerprint
 
 # Change kinds that introduce logic the committing developer is accountable for and that
 # therefore need attribution and, from Phase 3, comprehension verification.
@@ -61,6 +62,12 @@ class Hunk:
     end_lineno: int
     similarity: float = 0.0
     previous_qualname: str | None = None
+    # Short hash of the definition's normalized syntax tree. Stored so that a report
+    # recipient can re-derive it from the source and check it, and so that Phase 4's
+    # hash chain covers the structural identity of the code rather than only its
+    # description. Only meaningful alongside the entry's fingerprint_version tag: see
+    # vouchcode.segmentation.fingerprint for why.
+    fingerprint: str = ""
     attribution: dict[str, Any] = field(default_factory=dict)
     # The post-commit source of this hunk. Held in memory for the attribution and
     # comprehension passes and deliberately never serialized: the ledger records
@@ -87,6 +94,7 @@ class Hunk:
             "change": self.change,
             "lines": [self.lineno, self.end_lineno],
             "similarity": self.similarity,
+            "fingerprint": self.fingerprint,
             "attribution": dict(self.attribution),
         }
 
@@ -126,6 +134,7 @@ def _from_change(path: str, change: DefinitionChange) -> Hunk:
         end_lineno=anchor.end_lineno,
         similarity=change.similarity,
         previous_qualname=previous,
+        fingerprint=compute_fingerprint(anchor.normalized_fingerprint),
         source=anchor.source,
     )
 
