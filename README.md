@@ -21,18 +21,18 @@ second condition.
 
 ## Status
 
-Phases 1, 2, and 3 of 6 are complete. The capture hooks, the local ledger, AST-based
-segmentation, hunk-level attribution, and the comprehension engine all work.
-Cryptographic signing and reporting are not yet implemented; every module for those
-layers is present as a documented stub that raises NotImplementedError rather than
-silently returning a wrong answer.
+Phases 1 through 4 of 6 are complete. The capture hooks, the local ledger, AST-based
+segmentation, hunk-level attribution, the comprehension engine, and the hash-chained
+Ed25519-signed ledger all work. Reporting is not yet implemented; its modules are present
+as documented stubs that raise NotImplementedError rather than silently returning a wrong
+answer.
 
 | Phase | Focus | State |
 | --- | --- | --- |
 | 1 | Foundation: CLI, hook installation, raw capture into a local JSON ledger | complete |
 | 2 | Segmentation: AST-based diff segmentation and hunk-level attribution | complete |
 | 3 | Comprehension: deterministic question generation and terminal scoring | complete |
-| 4 | Ledger: hash chaining and Ed25519 signatures | not started |
+| 4 | Ledger: hash chaining and Ed25519 signatures | complete |
 | 5 | Reporting: signed JSON and PDF reports, retroactive scan | not started |
 | 6 | Evaluation and demonstration | not started |
 
@@ -77,6 +77,7 @@ Commands:
 | `vouchcode init` | Install the capture hooks and create the ledger. `--force` replaces hooks Vouchcode does not own. |
 | `vouchcode status` | Report hook state and ledger size. Exits non-zero if a hook is inactive, so it is usable in CI. |
 | `vouchcode log` | Print ledger entries. `--json` for machine-readable output, `--limit N` for the newest N. |
+| `vouchcode verify` | Walk the chain, recheck every hash and signature, and report per entry. `--verbose` lists clean entries too. |
 | `vouchcode uninstall` | Remove the managed hooks. The ledger is retained. |
 
 ## Ledger format
@@ -191,6 +192,49 @@ Comprehension runs in the pre-commit hook, the one place a commit can still be r
 failed check refuses the commit and says so; `git commit --no-verify` records the commit
 with comprehension explicitly unverified. Merge commits are excluded by decision, and a
 commit made with no terminal attached is recorded as skipped, never as passed.
+
+## Tamper evidence
+
+Every entry carries the hash of its predecessor, is hashed itself, and is signed with a
+local Ed25519 key generated at `vouchcode init`. Editing any entry after the fact breaks
+that entry's hash and every link after it.
+
+```console
+$ vouchcode verify
+    1  9308697211  tampered
+                   content does not match its recorded hash: stored 726a2896, recomputed 64221d51
+    2  767e4bf338  chain_broken
+                   previous_hash 726a2896 does not match the preceding entry's hash 64221d51
+
+error: ledger integrity failed. first failure at entry 1, commit 9308697211
+```
+
+Verification reports **per entry**, not one verdict for the repository, and distinguishes
+the entry that was edited from the entries that merely inherit a broken link. That is what
+names the first point of failure instead of condemning the whole ledger.
+
+Five outcomes, deliberately distinct:
+
+| Status | Meaning |
+| --- | --- |
+| `verified` | Hash, link, and signature all check out. |
+| `tampered` | The entry's own content no longer matches its hash or signature. |
+| `chain_broken` | The entry is intact, but its link to its predecessor is not. |
+| `unverifiable_version` | Cryptographically sound, but its fingerprints were computed under a different interpreter, so they cannot be compared. |
+| `unsigned` | No signature present. Not tampering, but not attested either. |
+
+`unverifiable_version` exists because `ast.dump` output is not stable across Python
+versions. Every entry carrying AST fingerprints also records the algorithm version, the
+interpreter's major and minor version, and a probe hash of how that interpreter serializes
+the constructs the fingerprinter relies on. Without this, a ledger written under one
+interpreter and verified under another would report tampering that never happened. It
+exits zero: the ledger is sound, and only the fingerprint comparison is unavailable.
+
+Scope decisions for this version, stated rather than implied: the private key has no
+passphrase, it is written owner read and write only (a no-op on Windows, where the key
+inherits directory permissions), and key rotation is not supported. Signing proves a
+ledger was produced by the holder of a specific key; a verifier who needs to defend
+against key substitution must know which key to expect, per Section 6.2.
 
 ## Architecture
 

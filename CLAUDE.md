@@ -156,6 +156,37 @@ Recorded comprehension decisions, so they are not relitigated as bugs:
   density alone is not enough either: padding a keyword list with articles defeated it.
   The composite requires a linking word and vocabulary of the answer's own as well.
 
+Recorded ledger and signing decisions, so they are not relitigated as bugs:
+
+- No passphrase on the private key, for this version. A passphrase means prompting on
+  every commit or caching the decrypted key, and the second defeats the point while the
+  first makes committing intolerable. Section 6.1 already places a compromised local
+  machine out of scope, so a passphrase would defend against a threat the model does not
+  cover. Revisit only alongside a real agent or keychain integration.
+- The private key is written owner read and write only. On Windows `chmod` is a
+  documented no-op, not a silent one: the key inherits directory permissions, which is
+  weaker, and the test skips rather than asserting loosely so that a pass never implies a
+  protection the file does not have.
+- Key rotation is out of scope for this version. One key per repository, for its
+  lifetime. Rotation raises questions this version does not answer, and answering them
+  badly is worse than not offering the feature.
+- `ensure_keypair` is idempotent and must stay that way. Regenerating a key on an
+  initialized repository would orphan every existing signature, turning a rerun of `init`
+  into silent destruction of the provenance record.
+- Chain links compare against the predecessor's **recomputed** hash, never its stored
+  one. Comparing stored hashes would confine a tamper report to the edited entry and
+  leave every following entry looking intact, which defeats the property a hash chain
+  exists to provide.
+- Signing is best effort at append time. A missing key yields an unsigned entry that
+  verification reports as `unsigned`, rather than losing the entry entirely.
+- Fingerprints are never stored without a `fingerprint_version` tag recording the
+  algorithm, the interpreter's major and minor version, and an `ast_signature` probe
+  hash. A missing tag is treated as non-comparable, never as comparable, because an entry
+  that makes no claim about its conditions supports no conclusion.
+- `unverifiable_version` is its own verification category and must not be folded into
+  either `verified` or `tampered`. It exits zero, because the ledger is sound and only
+  its fingerprints are non-comparable; exiting non-zero would train readers to ignore it.
+
 ## Rule 9: Tests alongside every feature
 
 Each phase needs at least one test that proves its exit criterion, not merely that the
