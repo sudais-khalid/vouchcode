@@ -36,11 +36,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# The linter, formatter, and type checker are pinned exactly rather than floated.
+# They are pass/fail gates in CI, and an unpinned gate makes a green build a function
+# of upstream release dates instead of the diff under review: a new ruff release can
+# reformat files a pull request never touched, and a new mypy release can report errors
+# on unchanged code. Pinning keeps a local run and a CI run the same run. Bump these
+# deliberately, in their own commit. pytest stays floated within a major version because
+# it reports results rather than gating on style.
 dev = [
-    "pytest>=8.0",
+    "pytest>=8.0,<10",
     "pytest-cov>=5.0",
-    "ruff>=0.4",
-    "mypy>=1.10",
+    "ruff==0.16.3",
+    "mypy==2.3.1",
 ]
 
 [project.scripts]
