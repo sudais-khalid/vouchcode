@@ -86,3 +86,9 @@ addopts = "-q"
 python_version = "3.10"
 warn_unused_ignores = true
 warn_return_any = true
+
+# ReportLab publishes no type stubs. Scoped to that package rather than silencing
+# missing imports globally, so a genuinely missing dependency elsewhere still fails.
+[[tool.mypy.overrides]]
+module = ["reportlab.*"]
+ignore_missing_imports = true
