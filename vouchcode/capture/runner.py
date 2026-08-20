@@ -56,6 +56,7 @@ from vouchcode.ledger.entry import (
     utc_timestamp,
 )
 from vouchcode.ledger.store import append_entry, contains_commit
+from vouchcode.segmentation.fingerprint import current_version
 
 PRE_COMMIT = "pre-commit"
 POST_COMMIT = "post-commit"
@@ -223,6 +224,7 @@ def run_post_merge() -> None:
     append_entry(
         ctx.ledger_path,
         _build_entry(repo, ctx, commit_sha, files=None, branch=current_branch(repo)),
+        ctx.vouchcode_dir,
     )
     _clear_pending(ctx)
 
@@ -294,6 +296,11 @@ def _apply_segmentation(
         return
 
     entry.hunks = [hunk.to_dict() for hunk in result.hunks]
+    # Stamped alongside the hunks, never separately. A fingerprint without the
+    # conditions
+    # of its computation is not verifiable, so the two are written together or not at
+    # all.
+    entry.fingerprint_version = current_version()
     entry.attribution = result.attribution.to_dict()
     entry.skipped = result.skipped
 

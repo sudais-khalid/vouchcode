@@ -14,7 +14,7 @@ Field lifecycle:
     hunks                                      Phase 2.
     comprehension.status / rationale           Phase 2 records the exclusion decision;
                                                Phase 3 records the outcome.
-    previous_hash, entry_hash, signature       Phase 4.
+    previous_hash, entry_hash, signature       Phase 4, attached at append time.
 
 Merge commits. An entry whose type is "merge" carries files as null rather than as a
 list. This is deliberate and is not a missing value. A merge commit's diff against its
@@ -76,6 +76,18 @@ class LedgerEntry:
     # Files that could not be parsed into an abstract syntax tree, recorded so that a
     # report states what it could not analyze rather than quietly omitting it.
     skipped: list[str] = field(default_factory=list)
+    # Conditions under which this entry's hunk fingerprints were computed. Present
+    # whenever hunks are, absent otherwise. Without it a verifier cannot tell an
+    # interpreter difference from a tampered fingerprint, and would report one as the
+    # other. See vouchcode.segmentation.fingerprint.
+    fingerprint_version: dict[str, Any] | None = None
+    # Hash chain and signature, attached when the entry is finalized by
+    # vouchcode.ledger.store.append_entry. Empty until then. See
+    # vouchcode.ledger.chain for the genesis case and vouchcode.ledger.signing for the
+    # scope decisions governing the key.
+    previous_hash: str = ""
+    entry_hash: str = ""
+    signature: str = ""
     # Comprehension outcome, always present and never null. An entry that was not
     # evaluated says so with a rationale rather than leaving an empty field that reads
     # like an oversight. See vouchcode.comprehension.eligibility for the vocabulary.
@@ -103,8 +115,16 @@ class LedgerEntry:
             "files": None if self.files is None else list(self.files),
             "attribution": dict(self.attribution),
             "hunks": None if self.hunks is None else [dict(h) for h in self.hunks],
+            "fingerprint_version": (
+                None
+                if self.fingerprint_version is None
+                else dict(self.fingerprint_version)
+            ),
             "skipped": list(self.skipped),
             "comprehension": dict(self.comprehension),
+            "previous_hash": self.previous_hash,
+            "entry_hash": self.entry_hash,
+            "signature": self.signature,
         }
 
     @classmethod
@@ -123,8 +143,16 @@ class LedgerEntry:
             entry_type=data.get("type", ENTRY_TYPE_COMMIT),
             attribution=dict(data.get("attribution") or unclassified_attribution()),
             hunks=None if data.get("hunks") is None else list(data["hunks"]),
+            fingerprint_version=(
+                None
+                if data.get("fingerprint_version") is None
+                else dict(data["fingerprint_version"])
+            ),
             skipped=list(data.get("skipped") or []),
             comprehension=dict(data.get("comprehension") or {}),
+            previous_hash=str(data.get("previous_hash") or ""),
+            entry_hash=str(data.get("entry_hash") or ""),
+            signature=str(data.get("signature") or ""),
         )
 
     def file_count(self) -> int:

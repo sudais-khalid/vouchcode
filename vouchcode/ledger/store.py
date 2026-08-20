@@ -28,7 +28,16 @@ from typing import Any
 
 from vouchcode.config import LEDGER_SCHEMA_VERSION, RepoContext
 from vouchcode.errors import LedgerError
+from vouchcode.ledger.canonical import canonical_bytes
+from vouchcode.ledger.chain import link
 from vouchcode.ledger.entry import LedgerEntry
+from vouchcode.ledger.signing import (
+    SigningError,
+    ensure_keypair,
+    load_private_key,
+    public_key_b64,
+    sign_payload,
+)
 
 
 def empty_ledger() -> dict[str, Any]:
@@ -81,13 +90,62 @@ def read_entries(path: Path) -> list[LedgerEntry]:
         raise LedgerError(f"ledger {path} contains a malformed entry: {exc}") from exc
 
 
-def append_entry(path: Path, entry: LedgerEntry) -> dict[str, Any]:
-    """Append one entry to the ledger and persist it, returning the updated document."""
+def append_entry(
+    path: Path,
+    entry: LedgerEntry,
+    vouchcode_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Append one entry to the ledger, chaining and signing it, and persist the result.
+
+    Chaining and signing happen here rather than at the call site because this is the
+    only place an entry becomes part of the record. An entry that reached the ledger
+    unchained or unsigned would be indistinguishable from one whose attestation was
+    stripped.
+
+    Signing is best effort by design. If the key is unavailable, the entry is still
+    chained and still recorded, carrying no signature, and verification reports it as
+    unsigned. Losing the provenance record entirely because a key file was deleted would
+    be a worse outcome than recording an unattested entry and saying so.
+    """
     document = read_ledger(path)
     document.setdefault("schema_version", LEDGER_SCHEMA_VERSION)
-    document["entries"].append(entry.to_dict())
+
+    previous = document["entries"][-1] if document["entries"] else None
+
+    payload = link(entry.to_dict(), previous)
+
+    directory = vouchcode_dir if vouchcode_dir is not None else path.parent
+    _sign_in_place(payload, document, directory)
+
+    document["entries"].append(payload)
     write_ledger(path, document)
     return document
+
+
+def _sign_in_place(
+    payload: dict[str, Any],
+    document: dict[str, Any],
+    vouchcode_dir: Path,
+) -> None:
+    """Sign a finalized entry and record the public key on the ledger.
+
+    The public key is written into the ledger document so that verification needs
+    nothing beyond the file itself. That does not defend against key substitution, which
+    Section 6.2 addresses by having the verifier know the expected key in advance; it
+    means a verifier who does know it can check without hunting for a key file.
+    """
+    try:
+        private_key = load_private_key(vouchcode_dir)
+        payload["signature"] = sign_payload(canonical_bytes(payload), private_key)
+    except (SigningError, OSError):
+        payload["signature"] = ""
+        return
+
+    if not document.get("public_key"):
+        try:
+            document["public_key"] = public_key_b64(vouchcode_dir)
+        except SigningError:
+            pass
 
 
 def write_ledger(path: Path, document: dict[str, Any]) -> None:
@@ -131,6 +189,10 @@ def initialize_ledger(ctx: RepoContext) -> Path:
 
     if not ctx.ledger_path.exists():
         write_ledger(ctx.ledger_path, empty_ledger())
+
+    # Generated here so that the first commit is signable. ensure_keypair is idempotent,
+    # so rerunning init on an initialized repository never orphans existing signatures.
+    ensure_keypair(ctx.vouchcode_dir)
 
     return ctx.ledger_path
 
