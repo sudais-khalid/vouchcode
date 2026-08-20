@@ -70,7 +70,7 @@ Then produce and check the portable artifact:
 $ vouchcode report -o out
 json report: out/vouchcode-report.json
 pdf report: out/vouchcode-report.pdf
-signing key fingerprint: 0C7C B2E5 0164 3047 B5FA 619C F5F0 858F
+signing key fingerprint: 7D7C BBC8 6885 009B B043 59D0 F26E E03E
 
 $ vouchcode verify
 verified: 51
@@ -80,11 +80,31 @@ chain intact
 A recipient checks the report without installing anything:
 
 ```console
-$ vouchcode verify-report out/vouchcode-report.json --expect-fingerprint "0C7C B2E5 ..."
+$ vouchcode verify-report out/vouchcode-report.json --expect-fingerprint "7D7C BBC8 6885 009B B043 59D0 F26E E03E"
 signature: valid
 fingerprint: matches
 report verified and signed by the expected key
 ```
+
+## Verifying this repository
+
+This repository signs its own provenance reports. The signing key fingerprint is:
+
+```
+7D7C BBC8 6885 009B B043 59D0 F26E E03E
+```
+
+`reports/vouchcode-self-report.json` is a real report over this repository's own history.
+To check it:
+
+```sh
+vouchcode verify-report reports/vouchcode-self-report.json --expect-fingerprint "7D7C BBC8 6885 009B B043 59D0 F26E E03E"
+```
+
+The fingerprint above is published here, in the repository, deliberately. A fingerprint a
+verifier only ever sees inside the report it is meant to authenticate proves nothing,
+because a forged report carries a forged key and a fingerprint matching it perfectly. This
+copy is the independent one. Compare it against whatever report you were handed.
 
 ## Commands
 
