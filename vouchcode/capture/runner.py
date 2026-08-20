@@ -39,7 +39,8 @@ from vouchcode.capture.changeset import (
     is_merge_commit,
     staged_files,
 )
-from vouchcode.capture.segmentation_pass import segment_commit
+from vouchcode.capture.segmentation_pass import segment_commit, segment_staged
+from vouchcode.comprehension import engine
 from vouchcode.comprehension.eligibility import (
     COMPREHENSION_EXCLUDED_MERGE,
     MERGE_RATIONALE,
@@ -109,14 +110,61 @@ def run_pre_commit() -> None:
 
     repo = _open_repo(ctx)
     files = staged_files(repo)
-    _write_pending(
-        ctx,
-        {
-            "captured_at": utc_timestamp(),
-            "branch": current_branch(repo),
-            "files": files,
-        },
+
+    pending: dict[str, Any] = {
+        "captured_at": utc_timestamp(),
+        "branch": current_branch(repo),
+        "files": files,
+    }
+
+    outcome = _verify_comprehension(ctx, repo, files)
+    if outcome is not None:
+        # Carried to post-commit rather than recomputed there. The questions were asked
+        # against the staged content, and re-deriving the result afterward could produce
+        # a different one, which would mean the ledger recorded something the developer
+        # was never actually asked.
+        pending["comprehension"] = outcome.to_dict()
+
+        if outcome.blocks_commit:
+            _write_pending(ctx, pending)
+            _refuse(outcome.rationale)
+
+    _write_pending(ctx, pending)
+
+
+def _verify_comprehension(
+    ctx: RepoContext,
+    repo: Repo,
+    files: list[str],
+) -> engine.CommitComprehension | None:
+    """Run the comprehension check over the staged change, or return None on failure.
+
+    Returning None means the check could not run at all, which is a capture failure and
+    must not block the commit. That is the distinction the module docstring draws: a
+    refusal is a product decision, and a fault is not.
+    """
+    try:
+        result = segment_staged(repo, ctx.vouchcode_dir, files)
+        eligible, _record = evaluate_gate(ENTRY_TYPE_COMMIT, result.hunks)
+        return engine.verify(eligible)
+    except Exception as exc:
+        _warn(f"comprehension check skipped: {exc.__class__.__name__}: {exc}")
+        return None
+
+
+def _refuse(reason: str) -> None:
+    """Stop the commit because comprehension was not demonstrated.
+
+    Exits non-zero from pre-commit, which is the one place Vouchcode deliberately
+    prevents a commit. The message says what to do next, because a gate that only says
+    no is a gate developers route around.
+    """
+    _warn(reason)
+    _warn(
+        "commit refused. read the code above, or run 'git commit --no-verify' to "
+        "record the commit with comprehension unverified"
     )
+    raise SystemExit(1)
 
 
 def run_post_commit() -> None:
@@ -185,6 +233,7 @@ def _build_entry(
     commit_sha: str,
     files: list[str] | None,
     branch: str | None,
+    recorded_comprehension: dict[str, Any] | None = None,
 ) -> LedgerEntry:
     """Assemble a ledger entry, classifying merges by parent count.
 
@@ -218,7 +267,7 @@ def _build_entry(
         return entry
 
     if files:
-        _apply_segmentation(entry, repo, ctx, commit_sha, files)
+        _apply_segmentation(entry, repo, ctx, commit_sha, files, recorded_comprehension)
 
     return entry
 
@@ -229,6 +278,7 @@ def _apply_segmentation(
     ctx: RepoContext,
     commit_sha: str,
     files: list[str],
+    recorded_comprehension: dict[str, Any] | None = None,
 ) -> None:
     """Run the Phase 2 segmentation and attribution pass over a commit's files.
 
@@ -248,9 +298,12 @@ def _apply_segmentation(
     entry.skipped = result.skipped
 
     # The gate decides what the comprehension engine would question and records why when
-    # the answer is nothing. Phase 3 replaces this record with an actual outcome when
-    # eligible hunks exist.
+    # the answer is nothing. When pre-commit actually ran the check, its result is
+    # authoritative and replaces this, because that is the exchange the developer had.
     _eligible, entry.comprehension = evaluate_gate(entry.entry_type, result.hunks)
+
+    if recorded_comprehension:
+        entry.comprehension = dict(recorded_comprehension)
 
 
 def _open_repo(ctx: RepoContext) -> Repo:

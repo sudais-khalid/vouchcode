@@ -119,3 +119,68 @@ def _baseline_sources(
             break
 
     return sources
+
+
+def segment_staged(
+    repo: Repo,
+    vouchcode_dir: Path,
+    files: list[str],
+) -> SegmentationResult:
+    """Segment and attribute the staged change, before any commit exists.
+
+    Used by the pre-commit hook, which must reason about what is about to be committed
+    rather than about what was. The post-commit version of this reads two commits; this
+    one compares HEAD against the index, because the index is what the commit will
+    contain and the working tree may already have moved past it.
+    """
+    hunks: list[Hunk] = []
+    skipped: list[str] = []
+    has_head = repo.head.is_valid()
+
+    for path in files:
+        if not _is_python(path):
+            continue
+        try:
+            before = _read_blob(repo, "HEAD", path) if has_head else ""
+            # The empty revision prefix names the index entry, which is exactly the
+            # content staged for this commit.
+            after = _read_blob(repo, "", path)
+            hunks.extend(build_hunks(path, before, after))
+        except SegmentationError as exc:
+            skipped.append(f"{path}: {exc}")
+
+    baseline_sources = (
+        _staged_baseline_sources(repo, exclude=set(files)) if has_head else []
+    )
+    attribute_hunks(hunks, vouchcode_dir, baseline_sources)
+
+    return SegmentationResult(
+        hunks=hunks,
+        attribution=summarize(hunks),
+        skipped=skipped,
+    )
+
+
+def _staged_baseline_sources(repo: Repo, exclude: set[str]) -> list[str]:
+    """Collect prior Python sources from HEAD for the stylometric baseline.
+
+    Read from HEAD rather than from the index, so that the code being attributed is
+    never part of the baseline it is measured against.
+    """
+    try:
+        listing = repo.git.ls_tree("-r", "--name-only", "HEAD")
+    except Exception:
+        return []
+
+    sources: list[str] = []
+    for path in listing.splitlines():
+        path = path.strip()
+        if not path or not _is_python(path) or path in exclude:
+            continue
+        content = _read_blob(repo, "HEAD", path)
+        if content.strip():
+            sources.append(content)
+        if len(sources) >= MAX_BASELINE_FILES:
+            break
+
+    return sources
