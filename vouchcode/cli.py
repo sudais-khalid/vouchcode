@@ -7,7 +7,8 @@ Output conventions, applied consistently across every command:
     diagnostics to stderr, data to stdout, so that output can be piped
     a non-zero exit code whenever the command did not do what was asked
 
-Commands: init, status, log, key, verify, report, verify-report, scan, uninstall.
+Commands: about, init, status, log, key, verify, report, verify-report, gate,
+badge, scan, uninstall.
 """
 
 from __future__ import annotations
@@ -20,10 +21,19 @@ import typer
 from git import Repo
 from rich.console import Console
 
-from vouchcode import __version__
+from vouchcode import (
+    AUTHOR_NAME,
+    AUTHOR_URL,
+    DESCRIPTION,
+    PROJECT_NAME,
+    REPOSITORY_URL,
+    __version__,
+)
+from vouchcode.badge import write_badge
 from vouchcode.capture.hooks import all_hook_statuses, install_hooks, uninstall_hooks
 from vouchcode.config import MANAGED_HOOKS, RepoContext, discover_repo
 from vouchcode.errors import VouchcodeError
+from vouchcode.gate import MIN_CONFIDENCE, GateError, run_gate
 from vouchcode.ledger.entry import LedgerEntry
 from vouchcode.ledger.signing import (
     SigningError,
@@ -480,6 +490,114 @@ def _slice_since(
         if str(entry.get("commit", "")).startswith(since):
             return entries[index + 1 :], f"after {since[:10]}"
     return None, ""
+
+
+@app.command()
+def about() -> None:
+    """Print what this is, who wrote it, and where it lives."""
+    _out.print(f"{PROJECT_NAME} {__version__}")
+    _out.print(DESCRIPTION)
+    _out.print(f"author: {AUTHOR_NAME} ({AUTHOR_URL})")
+    _out.print(f"repository: {REPOSITORY_URL}")
+
+
+@app.command()
+def gate(
+    base_ref: Annotated[
+        str | None,
+        typer.Option(
+            "--base-ref",
+            help="Only check commits introduced since this ref, as in CI.",
+        ),
+    ] = None,
+    min_confidence: Annotated[
+        float,
+        typer.Option(
+            "--min-confidence",
+            min=0.0,
+            max=1.0,
+            help="Only gate hunks attributed at or above this confidence.",
+        ),
+    ] = MIN_CONFIDENCE,
+    require_comprehension: Annotated[
+        bool,
+        typer.Option(
+            "--require-comprehension/--no-require-comprehension",
+            help="Fail when a gated hunk has no passing comprehension record.",
+        ),
+    ] = True,
+) -> None:
+    """Fail the build when AI-attributed code has not been accounted for.
+
+    Intended for continuous integration. Output is plain text with no terminal
+    formatting, because a CI log is not a terminal and escape sequences there are noise.
+
+    The default confidence threshold acts on direct tool signals and structural proof,
+    and deliberately not on stylometry, which is capped below it. Blocking a merge on a
+    heuristic's inference would be the overreach this project argues against. Lower the
+    threshold to enforce on inference too, as a decision rather than a default.
+    """
+    ctx = _context()
+
+    try:
+        ctx.require_initialized()
+    except VouchcodeError as exc:
+        raise _fail(str(exc)) from exc
+
+    try:
+        result = run_gate(
+            ctx.ledger_path,
+            Repo(ctx.root),
+            base_ref=base_ref,
+            min_confidence=min_confidence,
+            require_comprehension=require_comprehension,
+        )
+    except (GateError, VouchcodeError) as exc:
+        raise _fail(str(exc)) from exc
+
+    for line in result.report_lines():
+        # print rather than the Rich console, so nothing wraps or styles the output.
+        typer.echo(line)
+
+    if not result.passed:
+        raise typer.Exit(1)
+
+
+@app.command()
+def badge(
+    output: Annotated[
+        Path,
+        typer.Option("--output", "-o", help="Where to write the SVG."),
+    ] = Path("badge.svg"),
+) -> None:
+    """Generate a status badge from the current ledger.
+
+    The badge is a self-reported summary generated on this machine, not an attestation
+    issued by any service. It carries its generation date in the SVG title so a stale
+    committed badge can at least be dated.
+    """
+    ctx = _context()
+
+    try:
+        ctx.require_initialized()
+        entries = [entry.to_dict() for entry in read_entries(ctx.ledger_path)]
+    except VouchcodeError as exc:
+        raise _fail(str(exc)) from exc
+
+    if not entries:
+        raise _fail("ledger is empty, nothing to summarize")
+
+    try:
+        document = build_report(entries, ctx.vouchcode_dir, repository=str(ctx.root))
+    except (VouchcodeError, SigningError) as exc:
+        raise _fail(str(exc)) from exc
+
+    path = write_badge(document, output)
+    _out.print(f"badge written: {path}")
+    _out.print(
+        "this badge is generated locally from your own ledger and is not a "
+        "third-party attestation"
+    )
 
 
 @app.command()

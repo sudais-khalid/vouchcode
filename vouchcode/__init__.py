@@ -14,4 +14,22 @@ No layer makes a network call and no layer depends on an external language model
 
 __version__ = "0.1.0"
 
-__all__ = ["__version__"]
+# Project identity, defined once so the CLI, the generated PDF, and the README cannot
+# drift apart on how the project or its author is named.
+PROJECT_NAME = "Vouchcode"
+DESCRIPTION = (
+    "Local-first cryptographic provenance and comprehension verification for "
+    "AI-assisted development"
+)
+AUTHOR_NAME = "Muhammad Sudais Khalid"
+AUTHOR_URL = "https://sudaiskhalid.com"
+REPOSITORY_URL = "https://github.com/sudais-khalid/VOUCHCODE"
+
+__all__ = [
+    "AUTHOR_NAME",
+    "AUTHOR_URL",
+    "DESCRIPTION",
+    "PROJECT_NAME",
+    "REPOSITORY_URL",
+    "__version__",
+]
