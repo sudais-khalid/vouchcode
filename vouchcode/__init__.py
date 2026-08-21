@@ -23,7 +23,7 @@ DESCRIPTION = (
 )
 AUTHOR_NAME = "Sudais Khalid"
 AUTHOR_URL = "https://sudaiskhalid.com"
-REPOSITORY_URL = "https://github.com/sudais-khalid/VOUCHCODE"
+REPOSITORY_URL = "https://github.com/sudais-khalid/vouchcode"
 
 __all__ = [
     "AUTHOR_NAME",

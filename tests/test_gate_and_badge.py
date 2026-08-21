@@ -368,4 +368,4 @@ def test_about_names_the_author_and_repository(
     assert result.returncode == 0, result.stderr
     assert "Sudais Khalid" in result.stdout
     assert "https://sudaiskhalid.com" in result.stdout
-    assert "github.com/sudais-khalid/VOUCHCODE" in result.stdout
+    assert "github.com/sudais-khalid/vouchcode" in result.stdout

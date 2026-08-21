@@ -57,7 +57,7 @@ newer one before continuing; Vouchcode uses syntax that older versions cannot pa
 Clone this repository, then install it in editable mode.
 
 ```sh
-git clone https://github.com/sudais-khalid/VOUCHCODE.git
+git clone https://github.com/sudais-khalid/vouchcode.git
 cd VOUCHCODE
 pip install -e ".[dev]"
 ```
@@ -76,7 +76,7 @@ vouchcode about
 Vouchcode 0.1.0
 Local-first cryptographic provenance and comprehension verification for AI-assisted development
 author: Sudais Khalid (https://sudaiskhalid.com)
-repository: https://github.com/sudais-khalid/VOUCHCODE
+repository: https://github.com/sudais-khalid/vouchcode
 ```
 
 ### 3. Initialize a repository

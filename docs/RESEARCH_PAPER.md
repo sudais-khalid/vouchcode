@@ -2,7 +2,7 @@
 
 **Author:** Sudais Khalid ([sudaiskhalid.com](https://sudaiskhalid.com))
 
-**Repository:** https://github.com/sudais-khalid/VOUCHCODE
+**Repository:** https://github.com/sudais-khalid/vouchcode
 
 **Version:** 0.1.0, evaluated at 62 commits
 
@@ -595,6 +595,6 @@ improvement over a claim that can only be asserted.
 ## Availability
 
 Source, test suite, continuous integration configuration, and a signed self-application
-report are available at https://github.com/sudais-khalid/VOUCHCODE under the MIT license.
+report are available at https://github.com/sudais-khalid/vouchcode under the MIT license.
 The repository's signing key fingerprint is `7D7C BBC8 6885 009B B043 59D0 F26E E03E`, and
 `vouchcode verify-report` checks the included report against it.
