@@ -266,8 +266,8 @@ Stated plainly, because a provenance tool that overstates itself is worse than n
 like the rest of the repository. Confidence is always reported, is capped below certainty,
 and the path declines to classify at all when the baseline is under twelve prior
 definitions or the hunk under twenty syntax nodes. On Vouchcode's own history it produced
-a mean confidence of 0.245, which is weak evidence and is reported as such rather than
-rounded up.
+a mean confidence of 0.245 across 566 scored hunks, which is weak evidence and is reported
+as such rather than rounded up.
 
 **The comprehension scorer measures structural consistency, not understanding.** It
 separates a correct answer from a keyword-stuffed one and from a confidently wrong one,

@@ -1,6 +1,6 @@
 {
   "report_version": 1,
-  "generated_at": "2026-08-21T10:47:46+00:00",
+  "generated_at": "2026-08-21T11:19:17+00:00",
   "repository": "E:\\VOUCHCODE",
   "commit_range": "full history",
   "signing_key": {
@@ -11,29 +11,29 @@
   },
   "verification_notice": "Verifying this report's signature proves that its contents have not been altered since it was signed by the holder of the key below. It does not prove who that holder is. Anyone can generate a key and sign a report with it. To establish identity, compare the key fingerprint below against a copy of the same fingerprint obtained independently of this report, for example one published in the developer's repository or profile at an earlier date. Matching fingerprints mean the same key produced both. Differing fingerprints mean this report was not signed by the key you expected.",
   "summary": {
-    "commits": 61,
+    "commits": 62,
     "merges": 0,
     "retroactive_commits": 50,
-    "hunks_total": 810,
-    "hunks_carrying_new_logic": 644,
+    "hunks_total": 812,
+    "hunks_carrying_new_logic": 646,
     "lines": {
-      "attributed": 17279,
-      "ai": 7780,
+      "attributed": 17324,
+      "ai": 7825,
       "human": 8899,
       "mixed": 0,
       "unclassified": 600
     },
     "percentages": {
-      "ai": 45.0,
-      "human": 51.5,
+      "ai": 45.2,
+      "human": 51.4,
       "unclassified": 3.5
     },
     "attribution_sources": {
       "structural": 166,
-      "stylometry": 644
+      "stylometry": 646
     },
     "hunk_statuses": {
-      "ai": 176,
+      "ai": 178,
       "human": 388,
       "unchanged": 166,
       "unclassified": 80
@@ -45,7 +45,7 @@
       "pass_rate": null,
       "by_status": {
         "excluded_retroactive": 50,
-        "not_evaluated": 4,
+        "not_evaluated": 5,
         "not_required": 7
       }
     }
@@ -25603,7 +25603,122 @@
       "previous_hash": "2a69cc1451784b4a97b1714814476bf1a452e678eb1d62454281331781078bd1",
       "entry_hash": "65ebb3eb94c19a2a2d72cf2d4022fde4678ba69676bfa75f8fd4cd02a81d2064",
       "signature": "pTym3I5aoVGkN9icfMTB8nxNlC7lq2pdRA4tlfwJL0iVv71I5GGsuC1KI74W9s+nMATC9wkqralhIL8KrOQPDA=="
+    },
+    {
+      "commit": "442ad5fc841a25ff1f948ddfe15d70c7863eef91",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:51:54+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "806c7e9119faf184f72cf4f522bcde29fae10fe6"
+      ],
+      "files": [
+        "README.md",
+        "badge.svg",
+        "docs/RESEARCH_PAPER.md",
+        "reports/vouchcode-self-report.json",
+        "reports/vouchcode-self-report.pdf",
+        "tests/test_gate_and_badge.py",
+        "vouchcode/__init__.py"
+      ],
+      "attribution": {
+        "status": "ai",
+        "source": "stylometry",
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 2,
+          "human_hunks": 0,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 0,
+          "ai_line_share": 1.0
+        }
+      },
+      "hunks": [
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_about_names_the_author_and_repository",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "modified",
+          "lines": [
+            362,
+            371
+          ],
+          "similarity": 0.9857,
+          "fingerprint": "b0a15d2556d140aa",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.5852,
+              "threshold": 1.5,
+              "baseline_samples": 43,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.0289,
+                "identifier_entropy": 2.271,
+                "comment_density": 1.0044,
+                "docstring_ratio": 0.5735,
+                "line_length_variation": 4.0382,
+                "nesting_variation": 1.5952
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/__init__.py",
+          "qualname": "<module>",
+          "previous_qualname": null,
+          "kind": "module",
+          "change": "modified",
+          "lines": [
+            1,
+            35
+          ],
+          "similarity": 0.9737,
+          "fingerprint": "700e11c22fe31a5d",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.469,
+            "detail": {
+              "divergence": 2.547,
+              "threshold": 1.5,
+              "baseline_samples": 43,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.7247,
+                "identifier_entropy": 0.7429,
+                "comment_density": 1.0044,
+                "docstring_ratio": 5.1753,
+                "line_length_variation": 3.2388,
+                "nesting_variation": 3.3959
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        }
+      ],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_evaluated",
+        "rationale": "the comprehension engine did not run for this commit"
+      },
+      "previous_hash": "65ebb3eb94c19a2a2d72cf2d4022fde4678ba69676bfa75f8fd4cd02a81d2064",
+      "entry_hash": "9c862be45949caceed5edeff46fe5f1c76baf4afed23a0ebf4e2d1b803564f57",
+      "signature": "7ribicT/CV/QVMgktO+sxsEE4P/KTsPaIXkoXG0gA86Dgk8tZ85PRCKJoL/rmXLlCvRhgqpu4SZ3zUmxOwOHBQ=="
     }
   ],
-  "report_signature": "AbqTHn89Bi6Nhukcakz1GHLTkdMJI2hEHqFRLZk0kdInQKmafJaydrcmDxPn+C4yg/hGvagOAIQYcBFmmgY5DQ=="
+  "report_signature": "RYiqU/PRXdKuDWcFmc41lk4wEw5zqbHU1WxSTOiybkTXy9xgZeIyKjZUzL+jfSxPhsRNIHEUb+CTSnX/olWgDw=="
 }

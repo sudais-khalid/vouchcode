@@ -4,7 +4,7 @@
 
 **Repository:** https://github.com/sudais-khalid/VOUCHCODE
 
-**Version:** 0.1.0, evaluated at 53 commits
+**Version:** 0.1.0, evaluated at 62 commits
 
 ---
 
@@ -28,8 +28,8 @@ receiving a report rather than dependent on the party producing it.
 We describe the system's five layers, the deterministic scoring method and its
 discrimination between correct, superficial, and confidently incorrect answers, and the
 tamper-evidence construction. We report self-application to the system's own repository:
-736 hunks across 53 commits, 43.4 percent of changed logic attributed to AI generation at
-a mean stylometric confidence of 0.245 against a hard cap of 0.75. We argue that this
+812 hunks across 62 commits, 45.2 percent of changed logic attributed to AI generation
+at a mean stylometric confidence of 0.245 against a hard cap of 0.75. We argue that this
 number is a conservative underestimate and explain why. We describe the development
 methodology used, in which each phase was accepted only after an adversarial exit
 criterion was shown to fail correctly against a deliberately broken implementation, and we
@@ -379,27 +379,27 @@ by retroactive scan; commits after adoption were captured live.
 
 | Measure | Value |
 | --- | --- |
-| Commits in ledger | 53 |
+| Commits in ledger | 62 |
 | Reconstructed by retroactive scan | 50 |
-| Captured live | 3 |
-| Hunks analyzed | 736 |
-| Hunks carrying new logic | 594 |
-| Hunks proven unchanged | 142 |
-| Lines of changed logic | 15,562 |
-| AI-attributed | 43.4 percent (6,760 lines) |
-| Human-attributed | 52.8 percent (8,210 lines) |
-| Unclassified | 3.8 percent (592 lines) |
-| Chain verification | 53 entries verified, chain intact |
+| Captured live | 12 |
+| Hunks analyzed | 812 |
+| Hunks carrying new logic | 646 |
+| Hunks proven unchanged | 166 |
+| Lines of changed logic | 17,324 |
+| AI-attributed | 45.2 percent (7,825 lines) |
+| Human-attributed | 51.4 percent (8,899 lines) |
+| Unclassified | 3.5 percent (600 lines) |
+| Chain verification | 62 entries verified, chain intact |
 
 Attribution by source:
 
 | Source | Hunks |
 | --- | --- |
-| `structural` | 142 |
-| `stylometry` | 594 |
+| `structural` | 166 |
+| `stylometry` | 646 |
 | `tool_signal` | 0 |
 
-Stylometric confidence across 518 scored hunks: minimum 0.10, maximum 0.641, **mean
+Stylometric confidence across 566 scored hunks: minimum 0.10, maximum 0.641, **mean
 0.245**, against a hard cap of 0.75.
 
 ---
@@ -408,7 +408,7 @@ Stylometric confidence across 518 scored hunks: minimum 0.10, maximum 0.641, **m
 
 ### 6.1 Interpretation of the self-application figures
 
-**43.4 percent of changed logic is attributed to AI generation, and this is an
+**45.2 percent of changed logic is attributed to AI generation, and this is an
 underestimate.** Two properties of the measurement push in that direction and are recorded
 here rather than omitted.
 
@@ -422,11 +422,11 @@ style. The bias is conservative, so the heuristic under-reports AI content on pr
 repository where AI content is highest.
 
 The mean confidence of 0.245 is the honest summary: this is weak evidence, and the system
-reports it as weak evidence rather than presenting 43.4 percent as a measurement.
+reports it as weak evidence rather than presenting 45.2 percent as a measurement.
 
 The comprehension pass rate is reported as absent, not as zero. Fifty commits are
-retroactive and excluded by decision; the three live commits contained no AI-attributed
-Python hunks requiring verification. A rate of zero would read as universal failure, which
+retroactive and excluded by decision, and the live commits since adoption contained no
+AI-attributed Python hunks that reached an interactive verification prompt. A rate of zero would read as universal failure, which
 is a materially different and false claim.
 
 ### 6.2 Defects surfaced by the adversarial methodology
@@ -544,7 +544,7 @@ documented no-op on Windows, where the file inherits directory permissions.
 
 No labelled ground-truth corpus was used, so no attribution accuracy figure is reported.
 Self-application is a single case study on a repository written by the system's own author,
-which is a weak basis for generalization. The 43.4 percent figure characterizes this
+which is a weak basis for generalization. The 45.2 percent figure characterizes this
 repository under this measurement, not AI-assisted development generally.
 
 ---
@@ -579,8 +579,8 @@ zero-dependency syntax tree analysis, a deterministic comprehension engine, and 
 cryptographically tamper-evident ledger, it extends attribution into accountability while
 remaining installable in a single command.
 
-Self-application produced 53 verified ledger entries and an AI attribution of 43.4 percent
-at a mean confidence of 0.245, reported with the conservative bias of the measurement
+Self-application produced 62 verified ledger entries and an AI attribution of 45.2
+percent at a mean confidence of 0.245, reported with the conservative bias of the measurement
 stated rather than omitted. Six classes of defect were surfaced by an adversarial
 development methodology and are reported alongside the results.
 
