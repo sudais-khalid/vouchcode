@@ -1,6 +1,6 @@
 {
   "report_version": 1,
-  "generated_at": "2026-08-21T10:15:51+00:00",
+  "generated_at": "2026-08-21T10:47:46+00:00",
   "repository": "E:\\VOUCHCODE",
   "commit_range": "full history",
   "signing_key": {
@@ -11,32 +11,32 @@
   },
   "verification_notice": "Verifying this report's signature proves that its contents have not been altered since it was signed by the holder of the key below. It does not prove who that holder is. Anyone can generate a key and sign a report with it. To establish identity, compare the key fingerprint below against a copy of the same fingerprint obtained independently of this report, for example one published in the developer's repository or profile at an earlier date. Matching fingerprints mean the same key produced both. Differing fingerprints mean this report was not signed by the key you expected.",
   "summary": {
-    "commits": 53,
+    "commits": 61,
     "merges": 0,
     "retroactive_commits": 50,
-    "hunks_total": 736,
-    "hunks_carrying_new_logic": 594,
+    "hunks_total": 810,
+    "hunks_carrying_new_logic": 644,
     "lines": {
-      "attributed": 15562,
-      "ai": 6760,
-      "human": 8210,
+      "attributed": 17279,
+      "ai": 7780,
+      "human": 8899,
       "mixed": 0,
-      "unclassified": 592
+      "unclassified": 600
     },
     "percentages": {
-      "ai": 43.4,
-      "human": 52.8,
-      "unclassified": 3.8
+      "ai": 45.0,
+      "human": 51.5,
+      "unclassified": 3.5
     },
     "attribution_sources": {
-      "structural": 142,
-      "stylometry": 594
+      "structural": 166,
+      "stylometry": 644
     },
     "hunk_statuses": {
-      "ai": 159,
-      "human": 359,
-      "unchanged": 142,
-      "unclassified": 76
+      "ai": 176,
+      "human": 388,
+      "unchanged": 166,
+      "unclassified": 80
     },
     "comprehension": {
       "evaluated": 0,
@@ -45,7 +45,8 @@
       "pass_rate": null,
       "by_status": {
         "excluded_retroactive": 50,
-        "not_required": 3
+        "not_evaluated": 4,
+        "not_required": 7
       }
     }
   },
@@ -23254,7 +23255,2355 @@
       "previous_hash": "bbebeb54d8f7d4cf189c87d5b9862af32882ac65edecfae7e4d8395fb2b796e0",
       "entry_hash": "ae7550a6d2b6488408ec70b48c4f17a8f7f6354989824beb867a317a41712b91",
       "signature": "Cn+J8IhIslRdHp22mAw4YS22tkwVw3IZL61KsuUM1EZsY/E5pTaWqB9U776sSqYOgw6GJc/kp8zHyc4Z0a/1AA=="
+    },
+    {
+      "commit": "74bcd42913e77b75ecaaa711d8993f42f65751df",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:21:57+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "ff6b66f5578349903c1cb245e6c174369557c7dd"
+      ],
+      "files": [
+        "vouchcode/gate.py"
+      ],
+      "attribution": {
+        "status": "mixed",
+        "source": "stylometry",
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 2,
+          "human_hunks": 8,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 2,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.1933
+        }
+      },
+      "hunks": [
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "<module>",
+          "previous_qualname": null,
+          "kind": "module",
+          "change": "added",
+          "lines": [
+            1,
+            61
+          ],
+          "similarity": 0.0,
+          "fingerprint": "61e209875b0a8517",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.4987,
+            "detail": {
+              "divergence": 2.6677,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 3.6515,
+                "identifier_entropy": 0.5682,
+                "comment_density": 0.9864,
+                "docstring_ratio": 5.0838,
+                "line_length_variation": 2.3874,
+                "nesting_variation": 3.3288
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "GatedHunk",
+          "previous_qualname": null,
+          "kind": "class",
+          "change": "added",
+          "lines": [
+            65,
+            86
+          ],
+          "similarity": 0.0,
+          "fingerprint": "4930feeb11fb91c7",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.2161,
+            "detail": {
+              "divergence": 0.994,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.9543,
+                "identifier_entropy": 0.1555,
+                "comment_density": 0.9864,
+                "docstring_ratio": 1.3173,
+                "line_length_variation": 1.2171,
+                "nesting_variation": 1.3336
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "GatedHunk.ok",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            76,
+            77
+          ],
+          "similarity": 0.0,
+          "fingerprint": "e7f26f31d331cd2d",
+          "attribution": {
+            "status": "unclassified",
+            "source": "stylometry",
+            "confidence": null,
+            "detail": {
+              "reason": "hunk has 15 nodes, fewer than the 20 required to measure style"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "GatedHunk.line",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            79,
+            86
+          ],
+          "similarity": 0.0,
+          "fingerprint": "18ba65b7b67a68fb",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1535,
+            "detail": {
+              "divergence": 1.1406,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.2965,
+                "identifier_entropy": 2.4415,
+                "comment_density": 0.9864,
+                "docstring_ratio": 0.566,
+                "line_length_variation": 0.732,
+                "nesting_variation": 0.8215
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "GateResult",
+          "previous_qualname": null,
+          "kind": "class",
+          "change": "added",
+          "lines": [
+            90,
+            164
+          ],
+          "similarity": 0.0,
+          "fingerprint": "55bb78f2386a13a8",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.3742,
+            "detail": {
+              "divergence": 0.6238,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.4482,
+                "identifier_entropy": 0.9087,
+                "comment_density": 0.2666,
+                "docstring_ratio": 0.8464,
+                "line_length_variation": 0.3382,
+                "nesting_variation": 0.9348
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "GateResult.failures",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            102,
+            103
+          ],
+          "similarity": 0.0,
+          "fingerprint": "cfe7f65b374712bf",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.6406,
+            "detail": {
+              "divergence": 3.0146,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.6045,
+                "identifier_entropy": 3.0887,
+                "comment_density": 0.9864,
+                "docstring_ratio": 5.0838,
+                "line_length_variation": 6.3101,
+                "nesting_variation": 1.014
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "GateResult.passed",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            106,
+            116
+          ],
+          "similarity": 0.0,
+          "fingerprint": "3d9d6f74f79553ef",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.2079,
+            "detail": {
+              "divergence": 1.0132,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.2576,
+                "identifier_entropy": 2.8867,
+                "comment_density": 0.9864,
+                "docstring_ratio": 0.566,
+                "line_length_variation": 0.8006,
+                "nesting_variation": 0.5821
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "GateResult.report_lines",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            118,
+            164
+          ],
+          "similarity": 0.0,
+          "fingerprint": "ffd825b8be696186",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.3303,
+            "detail": {
+              "divergence": 0.7267,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.6963,
+                "identifier_entropy": 2.1225,
+                "comment_density": 0.1373,
+                "docstring_ratio": 0.566,
+                "line_length_variation": 0.0702,
+                "nesting_variation": 0.7678
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "commits_in_range",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            167,
+            185
+          ],
+          "similarity": 0.0,
+          "fingerprint": "055b3299471dd6ef",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.2557,
+            "detail": {
+              "divergence": 0.9013,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.0085,
+                "identifier_entropy": 1.6932,
+                "comment_density": 0.9864,
+                "docstring_ratio": 0.566,
+                "line_length_variation": 0.1229,
+                "nesting_variation": 1.0308
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "run_gate",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            188,
+            230
+          ],
+          "similarity": 0.0,
+          "fingerprint": "eb7418db08e66b55",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.3898,
+            "detail": {
+              "divergence": 0.5874,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.2319,
+                "identifier_entropy": 0.6533,
+                "comment_density": 0.9864,
+                "docstring_ratio": 0.566,
+                "line_length_variation": 0.224,
+                "nesting_variation": 0.8627
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "_gated_hunk",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            233,
+            266
+          ],
+          "similarity": 0.0,
+          "fingerprint": "ef526e4dd1aed043",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.4008,
+            "detail": {
+              "divergence": 0.5617,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.4221,
+                "identifier_entropy": 0.7619,
+                "comment_density": 0.0727,
+                "docstring_ratio": 0.566,
+                "line_length_variation": 0.1301,
+                "nesting_variation": 1.4171
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/gate.py",
+          "qualname": "GateError",
+          "previous_qualname": null,
+          "kind": "class",
+          "change": "added",
+          "lines": [
+            269,
+            270
+          ],
+          "similarity": 0.0,
+          "fingerprint": "6e987156a2d3c2ef",
+          "attribution": {
+            "status": "unclassified",
+            "source": "stylometry",
+            "confidence": null,
+            "detail": {
+              "reason": "hunk has 6 nodes, fewer than the 20 required to measure style"
+            }
+          }
+        }
+      ],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_evaluated",
+        "rationale": "the comprehension engine did not run for this commit"
+      },
+      "previous_hash": "ae7550a6d2b6488408ec70b48c4f17a8f7f6354989824beb867a317a41712b91",
+      "entry_hash": "659e9be85678418006de2b851cd4e7952ce34f850285b533c3c5e3e4eef7646c",
+      "signature": "GOtJ6BjD9LyXITX2tRb9z1qxAglm/OVcJ68uI++gG+E517uug3ImaDfXTgN2FIyZh/u0wwYLDZlDkRHvDAbGDw=="
+    },
+    {
+      "commit": "1b2c50869cca223503a76dbd760f31982cf0dd06",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:22:01+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "74bcd42913e77b75ecaaa711d8993f42f65751df"
+      ],
+      "files": [
+        ".github/workflows/vouchcode-gate.yml"
+      ],
+      "attribution": {
+        "status": "unclassified",
+        "source": null,
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 0,
+          "human_hunks": 0,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.0
+        }
+      },
+      "hunks": [],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_required",
+        "rationale": "no hunk in this commit was attributed to AI generation, so there was nothing to verify comprehension of"
+      },
+      "previous_hash": "659e9be85678418006de2b851cd4e7952ce34f850285b533c3c5e3e4eef7646c",
+      "entry_hash": "3e5a5037bf56b94cedac4db606c7f44194ca146f5d544d60d592b5940003eba8",
+      "signature": "b7xzy106h27W9sTO27hvKWwMkyUSjgrYtLmuVhfqWxvDdB9mPWCtAVphdqGldbcintQMGufLT/im1bjphuX2Cg=="
+    },
+    {
+      "commit": "a22a6c4d6f8c2b6574f5277578cf224558de1333",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:22:05+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "1b2c50869cca223503a76dbd760f31982cf0dd06"
+      ],
+      "files": [
+        "vouchcode/badge.py"
+      ],
+      "attribution": {
+        "status": "mixed",
+        "source": "stylometry",
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 3,
+          "human_hunks": 5,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.4387
+        }
+      },
+      "hunks": [
+        {
+          "path": "vouchcode/badge.py",
+          "qualname": "<module>",
+          "previous_qualname": null,
+          "kind": "module",
+          "change": "added",
+          "lines": [
+            1,
+            55
+          ],
+          "similarity": 0.0,
+          "fingerprint": "ef4cb5df682fec8d",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.3655,
+            "detail": {
+              "divergence": 2.3354,
+              "threshold": 1.5,
+              "baseline_samples": 42,
+              "per_metric_divergence": {
+                "mean_identifier_length": 2.2611,
+                "identifier_entropy": 2.1212,
+                "comment_density": 0.9951,
+                "docstring_ratio": 5.1214,
+                "line_length_variation": 0.149,
+                "nesting_variation": 3.3645
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/badge.py",
+          "qualname": "BadgeContent",
+          "previous_qualname": null,
+          "kind": "class",
+          "change": "added",
+          "lines": [
+            59,
+            65
+          ],
+          "similarity": 0.0,
+          "fingerprint": "cc3433b69cc36de0",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1077,
+            "detail": {
+              "divergence": 1.2538,
+              "threshold": 1.5,
+              "baseline_samples": 42,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.1396,
+                "identifier_entropy": 3.2322,
+                "comment_density": 0.9951,
+                "docstring_ratio": 0.5825,
+                "line_length_variation": 0.174,
+                "nesting_variation": 1.3994
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/badge.py",
+          "qualname": "badge_content",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            68,
+            101
+          ],
+          "similarity": 0.0,
+          "fingerprint": "bd40f074f7869520",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.41,
+            "detail": {
+              "divergence": 0.5629,
+              "threshold": 1.5,
+              "baseline_samples": 42,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.1883,
+                "identifier_entropy": 0.2288,
+                "comment_density": 0.0766,
+                "docstring_ratio": 0.5825,
+                "line_length_variation": 1.4671,
+                "nesting_variation": 0.834
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/badge.py",
+          "qualname": "render_badge",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            104,
+            143
+          ],
+          "similarity": 0.0,
+          "fingerprint": "637ca525cfbfed7d",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.2119,
+            "detail": {
+              "divergence": 1.0156,
+              "threshold": 1.5,
+              "baseline_samples": 42,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.2235,
+                "identifier_entropy": 1.8818,
+                "comment_density": 0.9951,
+                "docstring_ratio": 0.5825,
+                "line_length_variation": 0.5998,
+                "nesting_variation": 1.8109
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/badge.py",
+          "qualname": "write_badge",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            146,
+            150
+          ],
+          "similarity": 0.0,
+          "fingerprint": "ddb5feed6fa22d1e",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.554,
+              "threshold": 1.5,
+              "baseline_samples": 42,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.0259,
+                "identifier_entropy": 2.3594,
+                "comment_density": 0.9951,
+                "docstring_ratio": 0.5825,
+                "line_length_variation": 4.1939,
+                "nesting_variation": 1.1674
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/badge.py",
+          "qualname": "_segment_width",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            153,
+            155
+          ],
+          "similarity": 0.0,
+          "fingerprint": "b3e447aea1c46fe4",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.3781,
+              "threshold": 1.5,
+              "baseline_samples": 42,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.1354,
+                "identifier_entropy": 0.5772,
+                "comment_density": 0.9951,
+                "docstring_ratio": 0.5825,
+                "line_length_variation": 5.7211,
+                "nesting_variation": 0.2573
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/badge.py",
+          "qualname": "_escape",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            158,
+            165
+          ],
+          "similarity": 0.0,
+          "fingerprint": "764c5b5bb9d8762e",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.133,
+            "detail": {
+              "divergence": 1.804,
+              "threshold": 1.5,
+              "baseline_samples": 42,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.2614,
+                "identifier_entropy": 5.8244,
+                "comment_density": 0.9951,
+                "docstring_ratio": 0.5825,
+                "line_length_variation": 1.9035,
+                "nesting_variation": 0.2573
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/badge.py",
+          "qualname": "_now",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            168,
+            170
+          ],
+          "similarity": 0.0,
+          "fingerprint": "ba33276d582662a3",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.3467,
+              "threshold": 1.5,
+              "baseline_samples": 42,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.094,
+                "identifier_entropy": 2.9276,
+                "comment_density": 0.9951,
+                "docstring_ratio": 0.5825,
+                "line_length_variation": 2.2234,
+                "nesting_variation": 0.2573
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        }
+      ],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_evaluated",
+        "rationale": "the comprehension engine did not run for this commit"
+      },
+      "previous_hash": "3e5a5037bf56b94cedac4db606c7f44194ca146f5d544d60d592b5940003eba8",
+      "entry_hash": "de65f43a92b47ba491a4fbd7dfb7e0669a82efc717b90e164520649017a479aa",
+      "signature": "pIFErpXaWymjIdhxDY4NEgRVAoGb7BXRRSgB3b2QBvCUqafAL5F3eKcBpDdq2/dPxoRyyjyPjfW7lHkqzi+lAg=="
+    },
+    {
+      "commit": "6291aaaf2915085cb6e8fba325f691c9d7c9881d",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:22:10+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "a22a6c4d6f8c2b6574f5277578cf224558de1333"
+      ],
+      "files": [
+        "vouchcode/__init__.py",
+        "vouchcode/cli.py",
+        "vouchcode/reporting/pdf_report.py"
+      ],
+      "attribution": {
+        "status": "mixed",
+        "source": "stylometry",
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 3,
+          "human_hunks": 5,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 24,
+          "ai_line_share": 0.8395
+        }
+      },
+      "hunks": [
+        {
+          "path": "vouchcode/__init__.py",
+          "qualname": "<module>",
+          "previous_qualname": null,
+          "kind": "module",
+          "change": "modified",
+          "lines": [
+            1,
+            35
+          ],
+          "similarity": 0.5098,
+          "fingerprint": "345b721f9187b102",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.4373,
+            "detail": {
+              "divergence": 2.524,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.6785,
+                "identifier_entropy": 0.7699,
+                "comment_density": 1.0184,
+                "docstring_ratio": 5.067,
+                "line_length_variation": 3.2693,
+                "nesting_variation": 3.341
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "<module>",
+          "previous_qualname": null,
+          "kind": "module",
+          "change": "modified",
+          "lines": [
+            1,
+            679
+          ],
+          "similarity": 0.9417,
+          "fingerprint": "dd286cb965ffb4e3",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.6406,
+            "detail": {
+              "divergence": 4.854,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.4975,
+                "identifier_entropy": 1.3554,
+                "comment_density": 1.0184,
+                "docstring_ratio": 5.067,
+                "line_length_variation": 2.9013,
+                "nesting_variation": 18.2846
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "_fail",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            79,
+            82
+          ],
+          "similarity": 1.0,
+          "fingerprint": "64a4c3b589c6e789",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "_context",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            85,
+            90
+          ],
+          "similarity": 1.0,
+          "fingerprint": "61f487d8948e3d6c",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "_root",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            94,
+            103
+          ],
+          "similarity": 1.0,
+          "fingerprint": "9a9ed9a9ab4ff330",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "init",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            107,
+            130
+          ],
+          "similarity": 1.0,
+          "fingerprint": "8e0f729d0b07c748",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "status",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            134,
+            172
+          ],
+          "similarity": 1.0,
+          "fingerprint": "267a364b775259d3",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "log_command",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            176,
+            208
+          ],
+          "similarity": 1.0,
+          "fingerprint": "d9268e61d0c5e0d2",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "verify",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            212,
+            278
+          ],
+          "similarity": 1.0,
+          "fingerprint": "1e8c69e451851ee9",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "key_command",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            282,
+            308
+          ],
+          "similarity": 1.0,
+          "fingerprint": "57a9b49f665f565a",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "report",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            312,
+            371
+          ],
+          "similarity": 1.0,
+          "fingerprint": "bea425d6aa8e67e5",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "verify_report_command",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            375,
+            429
+          ],
+          "similarity": 1.0,
+          "fingerprint": "4c799fd4391c0237",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "scan",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            433,
+            481
+          ],
+          "similarity": 1.0,
+          "fingerprint": "fa9c533f6f6fcb2d",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "_slice_since",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            484,
+            492
+          ],
+          "similarity": 1.0,
+          "fingerprint": "2f76c07faa810ebc",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "about",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            496,
+            501
+          ],
+          "similarity": 0.0,
+          "fingerprint": "59a9b11ebbd34014",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.2831,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.2796,
+                "identifier_entropy": 0.3188,
+                "comment_density": 1.0184,
+                "docstring_ratio": 0.5921,
+                "line_length_variation": 4.0831,
+                "nesting_variation": 1.4068
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "gate",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            505,
+            563
+          ],
+          "similarity": 0.0,
+          "fingerprint": "8b429034d7b4e58d",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1996,
+            "detail": {
+              "divergence": 1.0326,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.3722,
+                "identifier_entropy": 0.3711,
+                "comment_density": 0.7264,
+                "docstring_ratio": 0.5921,
+                "line_length_variation": 2.745,
+                "nesting_variation": 1.389
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "badge",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            567,
+            600
+          ],
+          "similarity": 0.0,
+          "fingerprint": "032c5145e18c9b99",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.151,
+            "detail": {
+              "divergence": 1.1465,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.7983,
+                "identifier_entropy": 0.9914,
+                "comment_density": 1.0184,
+                "docstring_ratio": 0.5921,
+                "line_length_variation": 2.072,
+                "nesting_variation": 1.4068
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "uninstall",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            604,
+            619
+          ],
+          "similarity": 1.0,
+          "fingerprint": "2d3503455081cf6c",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "format_log_table",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            622,
+            662
+          ],
+          "similarity": 1.0,
+          "fingerprint": "c28126fee052b80b",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/cli.py",
+          "qualname": "_display",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            665,
+            675
+          ],
+          "similarity": 1.0,
+          "fingerprint": "c7cde6e4e69cfd9f",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "<module>",
+          "previous_qualname": null,
+          "kind": "module",
+          "change": "modified",
+          "lines": [
+            1,
+            60
+          ],
+          "similarity": 0.9577,
+          "fingerprint": "7d05071c5b23f905",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.215,
+            "detail": {
+              "divergence": 2.0034,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.523,
+                "identifier_entropy": 0.7475,
+                "comment_density": 1.0184,
+                "docstring_ratio": 5.067,
+                "line_length_variation": 1.3232,
+                "nesting_variation": 3.341
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "render_pdf",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "modified",
+          "lines": [
+            63,
+            92
+          ],
+          "similarity": 0.9123,
+          "fingerprint": "0fd9d423b499def1",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1586,
+            "detail": {
+              "divergence": 1.1288,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.4577,
+                "identifier_entropy": 0.0367,
+                "comment_density": 1.0184,
+                "docstring_ratio": 0.5921,
+                "line_length_variation": 2.4826,
+                "nesting_variation": 2.1851
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_styles",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            95,
+            151
+          ],
+          "similarity": 1.0,
+          "fingerprint": "ba56f66efca6203f",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_header",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            154,
+            162
+          ],
+          "similarity": 1.0,
+          "fingerprint": "3ca07031d5014805",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_key_block",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            165,
+            183
+          ],
+          "similarity": 1.0,
+          "fingerprint": "84277d0444a1106a",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_authorship",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            186,
+            220
+          ],
+          "similarity": 1.0,
+          "fingerprint": "10c60a970145036f",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_attribution_sources",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            223,
+            261
+          ],
+          "similarity": 1.0,
+          "fingerprint": "bf1731de25f39f5b",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_comprehension",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            264,
+            301
+          ],
+          "similarity": 1.0,
+          "fingerprint": "b0a77a1d4125e1e4",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_commit_table",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            304,
+            347
+          ],
+          "similarity": 1.0,
+          "fingerprint": "7dda2b9070b3d5ea",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_colophon",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            350,
+            368
+          ],
+          "similarity": 0.0,
+          "fingerprint": "afea22084dd31dae",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.2366,
+            "detail": {
+              "divergence": 0.9461,
+              "threshold": 1.5,
+              "baseline_samples": 41,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.1508,
+                "identifier_entropy": 0.7216,
+                "comment_density": 1.0184,
+                "docstring_ratio": 0.5921,
+                "line_length_variation": 2.9109,
+                "nesting_variation": 0.2827
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_table",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            371,
+            414
+          ],
+          "similarity": 1.0,
+          "fingerprint": "2ba4d9a7d956ce96",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        },
+        {
+          "path": "vouchcode/reporting/pdf_report.py",
+          "qualname": "_escape",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "moved",
+          "lines": [
+            417,
+            425
+          ],
+          "similarity": 1.0,
+          "fingerprint": "d0ee73c880caff57",
+          "attribution": {
+            "status": "unchanged",
+            "source": "structural",
+            "confidence": 1.0
+          }
+        }
+      ],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_evaluated",
+        "rationale": "the comprehension engine did not run for this commit"
+      },
+      "previous_hash": "de65f43a92b47ba491a4fbd7dfb7e0669a82efc717b90e164520649017a479aa",
+      "entry_hash": "1ad4a525e9f92b770c41ed49b3fefcd207421ddca649f53b99dd77e4af51708a",
+      "signature": "65P/coE6hKJ5BoAoOM1UxgX0PrVgb7XfWF9jCcODT0xEVxwbj6nsjgtPg7vb5OrROXG6wUnETNXJujk/YUCXCw=="
+    },
+    {
+      "commit": "da2238be282c8b4d3c73e61861795011a60a12bb",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:22:17+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "6291aaaf2915085cb6e8fba325f691c9d7c9881d"
+      ],
+      "files": [
+        "tests/test_gate_and_badge.py"
+      ],
+      "attribution": {
+        "status": "mixed",
+        "source": "stylometry",
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 9,
+          "human_hunks": 11,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 2,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.3662
+        }
+      },
+      "hunks": [
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "<module>",
+          "previous_qualname": null,
+          "kind": "module",
+          "change": "added",
+          "lines": [
+            1,
+            44
+          ],
+          "similarity": 0.0,
+          "fingerprint": "1969414ed38f5e2b",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.6033,
+            "detail": {
+              "divergence": 2.8162,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.6417,
+                "identifier_entropy": 6.5163,
+                "comment_density": 1.0178,
+                "docstring_ratio": 4.0337,
+                "line_length_variation": 1.6996,
+                "nesting_variation": 2.9882
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "_vouchcode_dir",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            47,
+            48
+          ],
+          "similarity": 0.0,
+          "fingerprint": "d1d12837c6c61132",
+          "attribution": {
+            "status": "unclassified",
+            "source": "stylometry",
+            "confidence": null,
+            "detail": {
+              "reason": "hunk has 14 nodes, fewer than the 20 required to measure style"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "_ledger_path",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            51,
+            52
+          ],
+          "similarity": 0.0,
+          "fingerprint": "817e63961de29956",
+          "attribution": {
+            "status": "unclassified",
+            "source": "stylometry",
+            "confidence": null,
+            "detail": {
+              "reason": "hunk has 17 nodes, fewer than the 20 required to measure style"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "_build_ai_commit",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            55,
+            89
+          ],
+          "similarity": 0.0,
+          "fingerprint": "8c3ec7d87e62f926",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.2011,
+            "detail": {
+              "divergence": 1.0611,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.3696,
+                "identifier_entropy": 0.7207,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 0.8658,
+                "nesting_variation": 1.8417
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "_set_comprehension",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            92,
+            116
+          ],
+          "similarity": 0.0,
+          "fingerprint": "3591d1730af2c0d2",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.3107,
+            "detail": {
+              "divergence": 0.8221,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.6013,
+                "identifier_entropy": 1.2245,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 0.369,
+                "nesting_variation": 1.1687
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_missing_comprehension_on_an_ai_hunk_fails_the_gate",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            124,
+            137
+          ],
+          "similarity": 0.0,
+          "fingerprint": "768245e887f1fa39",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.4489,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.3455,
+                "identifier_entropy": 1.513,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 3.6016,
+                "nesting_variation": 1.6644
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_passing_comprehension_on_the_same_hunk_passes_the_gate",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            140,
+            156
+          ],
+          "similarity": 0.0,
+          "fingerprint": "9be83c2c3915ed97",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.2005,
+            "detail": {
+              "divergence": 1.0625,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.8505,
+                "identifier_entropy": 1.8559,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 0.6124,
+                "nesting_variation": 1.4871
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_skipped_comprehension_is_not_treated_as_passing",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            159,
+            173
+          ],
+          "similarity": 0.0,
+          "fingerprint": "a0aae1dd9f973d20",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.2098,
+            "detail": {
+              "divergence": 1.0423,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.1588,
+                "identifier_entropy": 2.055,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 0.2592,
+                "nesting_variation": 1.2121
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_stylometry_attribution_does_not_fail_the_build_by_default",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            176,
+            198
+          ],
+          "similarity": 0.0,
+          "fingerprint": "a83083164d46d588",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1339,
+            "detail": {
+              "divergence": 1.2078,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.1916,
+                "identifier_entropy": 0.1837,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 3.4606,
+                "nesting_variation": 1.8417
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_lowering_the_threshold_is_an_explicit_choice",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            201,
+            212
+          ],
+          "similarity": 0.0,
+          "fingerprint": "83da94e7ad93c65e",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.26,
+            "detail": {
+              "divergence": 0.9327,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.8306,
+                "identifier_entropy": 1.5131,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 0.4714,
+                "nesting_variation": 1.2121
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_no_ai_hunks_in_range_passes",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            215,
+            230
+          ],
+          "similarity": 0.0,
+          "fingerprint": "56a8535a689f5240",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.1514,
+            "detail": {
+              "divergence": 1.8303,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.4839,
+                "identifier_entropy": 1.6361,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 5.4061,
+                "nesting_variation": 1.8867
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_commits_missing_from_the_ledger_are_warned_about",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            233,
+            251
+          ],
+          "similarity": 0.0,
+          "fingerprint": "9594f069e2220948",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1204,
+            "detail": {
+              "divergence": 1.2373,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.1384,
+                "identifier_entropy": 1.452,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 2.5999,
+                "nesting_variation": 1.6644
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_gate_output_is_plain_text_for_a_ci_log",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            254,
+            265
+          ],
+          "similarity": 0.0,
+          "fingerprint": "50daf674bc1059db",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.143,
+            "detail": {
+              "divergence": 1.188,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.2344,
+                "identifier_entropy": 1.8471,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 1.9906,
+                "nesting_variation": 1.4871
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_gate_command_exit_codes",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            268,
+            279
+          ],
+          "similarity": 0.0,
+          "fingerprint": "deb03dcad96ac1dd",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.3957,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.1306,
+                "identifier_entropy": 1.4482,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 3.6428,
+                "nesting_variation": 1.584
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "_report_with",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            287,
+            294
+          ],
+          "similarity": 0.0,
+          "fingerprint": "86153a9c9d670513",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.2993,
+            "detail": {
+              "divergence": 2.1531,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.8393,
+                "identifier_entropy": 2.8999,
+                "comment_density": 1.0178,
+                "docstring_ratio": 4.0337,
+                "line_length_variation": 3.1444,
+                "nesting_variation": 0.9834
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_badge_says_not_evaluated_rather_than_verified",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            297,
+            307
+          ],
+          "similarity": 0.0,
+          "fingerprint": "8a63e59f70d6b447",
+          "attribution": {
+            "status": "human",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.4787,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.773,
+                "identifier_entropy": 1.1402,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 3.1779,
+                "nesting_variation": 1.2121
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_badge_reports_a_low_pass_rate_as_it_is",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            310,
+            315
+          ],
+          "similarity": 0.0,
+          "fingerprint": "bca189cefd64812b",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.2551,
+            "detail": {
+              "divergence": 2.0566,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 2.3915,
+                "identifier_entropy": 1.2327,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 6.1441,
+                "nesting_variation": 1.0024
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_badge_is_green_only_when_the_data_supports_it",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            318,
+            323
+          ],
+          "similarity": 0.0,
+          "fingerprint": "fd6800950f8c040f",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.2723,
+            "detail": {
+              "divergence": 2.0941,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 2.8138,
+                "identifier_entropy": 1.0759,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 6.1035,
+                "nesting_variation": 1.0024
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_badge_carries_its_generation_date",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            326,
+            332
+          ],
+          "similarity": 0.0,
+          "fingerprint": "935e2151be953b98",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.2984,
+            "detail": {
+              "divergence": 2.151,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 1.6599,
+                "identifier_entropy": 2.8548,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 5.6106,
+                "nesting_variation": 1.2121
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_badge_svg_is_well_formed_and_ascii",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            335,
+            343
+          ],
+          "similarity": 0.0,
+          "fingerprint": "a8525f565ba8070b",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.1266,
+            "detail": {
+              "divergence": 1.7762,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.438,
+                "identifier_entropy": 1.7133,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 5.57,
+                "nesting_variation": 1.3668
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_badge_command_writes_a_file",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            346,
+            354
+          ],
+          "similarity": 0.0,
+          "fingerprint": "e3e4766011803e9b",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.6095,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.076,
+                "identifier_entropy": 1.6317,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 5.0133,
+                "nesting_variation": 1.3668
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        },
+        {
+          "path": "tests/test_gate_and_badge.py",
+          "qualname": "test_about_names_the_author_and_repository",
+          "previous_qualname": null,
+          "kind": "function",
+          "change": "added",
+          "lines": [
+            362,
+            371
+          ],
+          "similarity": 0.0,
+          "fingerprint": "48efc3d4bb570459",
+          "attribution": {
+            "status": "ai",
+            "source": "stylometry",
+            "confidence": 0.1,
+            "detail": {
+              "divergence": 1.5529,
+              "threshold": 1.5,
+              "baseline_samples": 44,
+              "per_metric_divergence": {
+                "mean_identifier_length": 0.0666,
+                "identifier_entropy": 2.266,
+                "comment_density": 1.0178,
+                "docstring_ratio": 0.5512,
+                "line_length_variation": 4.049,
+                "nesting_variation": 1.3668
+              },
+              "note": "heuristic inference from code style, not a detection of AI authorship"
+            }
+          }
+        }
+      ],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_evaluated",
+        "rationale": "the comprehension engine did not run for this commit"
+      },
+      "previous_hash": "1ad4a525e9f92b770c41ed49b3fefcd207421ddca649f53b99dd77e4af51708a",
+      "entry_hash": "691eb4a03d63459116f021fe8f88bf7877a5683a8b28cea1e15e207cf0bcf586",
+      "signature": "BufMgWrkcmZ75fhwXXowJkinAtgi0kayyKr2FfJg0Z1fxNSINJqUBHNz37B7bw8cyOsZhAkR2SiS1ms2etKODw=="
+    },
+    {
+      "commit": "d1000301485b93270da47e33f4ee6181fa75c092",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:22:22+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "da2238be282c8b4d3c73e61861795011a60a12bb"
+      ],
+      "files": [
+        "badge.svg",
+        "reports/vouchcode-self-report.json",
+        "reports/vouchcode-self-report.pdf"
+      ],
+      "attribution": {
+        "status": "unclassified",
+        "source": null,
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 0,
+          "human_hunks": 0,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.0
+        }
+      },
+      "hunks": [],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_required",
+        "rationale": "no hunk in this commit was attributed to AI generation, so there was nothing to verify comprehension of"
+      },
+      "previous_hash": "691eb4a03d63459116f021fe8f88bf7877a5683a8b28cea1e15e207cf0bcf586",
+      "entry_hash": "c0fe8ed3bd2e20a7555d471cc60933e27ca94c0efec8b84cd2a599ac2eb5f881",
+      "signature": "4yjL94LFntc/rVHq5nuOrOVwlwmQB1IrwSozNEasW3Eec7liT1XtV4M9mMNqdQJq2ThjFU1Zf+hPgFq2Bo08AA=="
+    },
+    {
+      "commit": "d7e3706fb305289c5f90b39a7d846f051a3e02ae",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:22:26+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "d1000301485b93270da47e33f4ee6181fa75c092"
+      ],
+      "files": [
+        "README.md"
+      ],
+      "attribution": {
+        "status": "unclassified",
+        "source": null,
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 0,
+          "human_hunks": 0,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.0
+        }
+      },
+      "hunks": [],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_required",
+        "rationale": "no hunk in this commit was attributed to AI generation, so there was nothing to verify comprehension of"
+      },
+      "previous_hash": "c0fe8ed3bd2e20a7555d471cc60933e27ca94c0efec8b84cd2a599ac2eb5f881",
+      "entry_hash": "2a69cc1451784b4a97b1714814476bf1a452e678eb1d62454281331781078bd1",
+      "signature": "kpffcO0YRtGJ51BDPYtTK4P6UlXBwmtH2cKuaHYYcMaiPvcWkXArdHsm/iAEqVj7k1nQNd6CkphFdH5AhY+rAA=="
+    },
+    {
+      "commit": "806c7e9119faf184f72cf4f522bcde29fae10fe6",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-21T10:22:31+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "d7e3706fb305289c5f90b39a7d846f051a3e02ae"
+      ],
+      "files": [
+        "docs/RESEARCH_PAPER.md"
+      ],
+      "attribution": {
+        "status": "unclassified",
+        "source": null,
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 0,
+          "human_hunks": 0,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.0
+        }
+      },
+      "hunks": [],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_required",
+        "rationale": "no hunk in this commit was attributed to AI generation, so there was nothing to verify comprehension of"
+      },
+      "previous_hash": "2a69cc1451784b4a97b1714814476bf1a452e678eb1d62454281331781078bd1",
+      "entry_hash": "65ebb3eb94c19a2a2d72cf2d4022fde4678ba69676bfa75f8fd4cd02a81d2064",
+      "signature": "pTym3I5aoVGkN9icfMTB8nxNlC7lq2pdRA4tlfwJL0iVv71I5GGsuC1KI74W9s+nMATC9wkqralhIL8KrOQPDA=="
     }
   ],
-  "report_signature": "IsGvpTBnBUCwzadVQFH8zN35La8+Xjm+lPhLBg98Oj17wtBESpJjHn/GeC3MvXsPFcc8IUmh0+lcojTV7pZHDg=="
+  "report_signature": "AbqTHn89Bi6Nhukcakz1GHLTkdMJI2hEHqFRLZk0kdInQKmafJaydrcmDxPn+C4yg/hGvagOAIQYcBFmmgY5DQ=="
 }

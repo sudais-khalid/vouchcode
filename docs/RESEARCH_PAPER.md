@@ -1,6 +1,6 @@
 # Vouchcode: Comprehension Verification as a Second Condition for Accountable AI-Assisted Software Development
 
-**Author:** Muhammad Sudais Khalid ([sudaiskhalid.com](https://sudaiskhalid.com))
+**Author:** Sudais Khalid ([sudaiskhalid.com](https://sudaiskhalid.com))
 
 **Repository:** https://github.com/sudais-khalid/VOUCHCODE
 

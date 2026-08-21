@@ -10,7 +10,7 @@ and carries its generation date in the SVG title attribute so a stale badge can 
 Regenerate it by running the command again. It is not a security guarantee.*
 
 Local-first cryptographic provenance and comprehension verification for AI-assisted
-development. Built by [Muhammad Sudais Khalid](https://sudaiskhalid.com).
+development. Built by [Sudais Khalid](https://sudaiskhalid.com).
 
 Vouchcode records which parts of each commit were AI-generated, requires the committing
 developer to demonstrate they understand that code before it is sealed, and appends the
@@ -75,7 +75,7 @@ vouchcode about
 ```
 Vouchcode 0.1.0
 Local-first cryptographic provenance and comprehension verification for AI-assisted development
-author: Muhammad Sudais Khalid (https://sudaiskhalid.com)
+author: Sudais Khalid (https://sudaiskhalid.com)
 repository: https://github.com/sudais-khalid/VOUCHCODE
 ```
 

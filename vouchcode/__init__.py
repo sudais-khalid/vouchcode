@@ -21,7 +21,7 @@ DESCRIPTION = (
     "Local-first cryptographic provenance and comprehension verification for "
     "AI-assisted development"
 )
-AUTHOR_NAME = "Muhammad Sudais Khalid"
+AUTHOR_NAME = "Sudais Khalid"
 AUTHOR_URL = "https://sudaiskhalid.com"
 REPOSITORY_URL = "https://github.com/sudais-khalid/VOUCHCODE"
 
