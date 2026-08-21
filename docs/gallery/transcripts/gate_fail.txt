@@ -1,0 +1,14 @@
+$ vouchcode gate --base-ref main
+vouchcode gate
+base ref: main
+commits in range: 1
+commits found in ledger: 1
+minimum confidence: 0.90
+comprehension required: yes
+gated hunks: 1
+
+FAIL  687c09b9fa  records.py:normalize_records  ai via tool_signal conf 1.00  comprehension: not_evaluated
+
+result: fail, 1 of 1 gated hunks lack a passing comprehension record
+$ echo $?
+1

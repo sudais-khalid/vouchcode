@@ -1,0 +1,27 @@
+
++-------------------- records.py: normalize_records ---------------------+
+| def normalize_records(records, strict):                                |
+|     if records is None:                                                |
+|         raise ValueError("records required")                           |
+|     result = {}                                                        |
+|     for key, value in records.items():                                 |
+|         if value is None and strict:                                   |
+|             return None                                                |
+|         result[key] = value.strip()                                    |
+|     return result                                                      |
+|                                                                        |
++------------ attributed ai via tool_signal, confidence 1.00 ------------+
+
+question 1 of 3: When records is None, what does this code do and why?
+answer: raises ValueError because it cannot work without the records mapping
+  correct, score 0.95: answer relates the condition to the outcome the code produces
+
+question 2 of 3: What happens if records.items() is empty when this code runs?
+answer: the loop body never runs so it returns the empty result dict unchanged
+  correct, score 0.79: answer relates the condition to the outcome the code produces
+
+question 3 of 3: When value is None and strict, what does this code do and why?
+answer: it returns None because that value is missing and strict mode is on
+  correct, score 0.84: answer relates the condition to the outcome the code produces
+
+comprehension: passed
