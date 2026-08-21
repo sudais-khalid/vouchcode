@@ -1,0 +1,52 @@
+name: Vouchcode gate
+
+# Runs on pull requests and fails when code attributed to AI generation has not been
+# accounted for by a passing comprehension record.
+#
+# What this catches, stated plainly so a maintainer knows what they are getting: a
+# contributor whose assistant integration recorded which lines it generated, who then
+# committed that code without demonstrating they understood it. It does not detect
+# AI-generated code that nobody reported. Vouchcode's stylometric fallback sits below the
+# gate's default confidence threshold on purpose, because failing someone's build on a
+# heuristic's inference is an overreach.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: comprehension gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The gate resolves base..HEAD, so a shallow clone would leave it unable to
+          # find the base commit. Full history is the simplest thing that always works.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install vouchcode
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e "."
+
+      - name: Verify the ledger has not been altered
+        # Run before the gate. A gate reading a tampered ledger would report on data that
+        # cannot be trusted, so integrity is established first.
+        run: vouchcode verify
+
+      - name: Gate on comprehension
+        run: |
+          vouchcode gate \
+            --base-ref "origin/${{ github.base_ref }}" \
+            --require-comprehension
