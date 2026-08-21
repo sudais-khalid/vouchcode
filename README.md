@@ -1,7 +1,16 @@
 # Vouchcode
 
+![Vouchcode](badge.svg)
+
+*This badge is generated locally by running `vouchcode badge` against this repository's
+own ledger. It is a self-reported summary, not a certification issued by any service. It
+shows the AI-attributed share of changed logic and the comprehension pass rate, says
+"comprehension not evaluated" when nothing was evaluated rather than implying otherwise,
+and carries its generation date in the SVG title attribute so a stale badge can be dated.
+Regenerate it by running the command again. It is not a security guarantee.*
+
 Local-first cryptographic provenance and comprehension verification for AI-assisted
-development.
+development. Built by [Muhammad Sudais Khalid](https://sudaiskhalid.com).
 
 Vouchcode records which parts of each commit were AI-generated, requires the committing
 developer to demonstrate they understand that code before it is sealed, and appends the
@@ -22,30 +31,88 @@ authorship of text, not comprehension of logic.
 second condition.** That is the whole thesis, and the comprehension layer is the part of
 this project that does not exist elsewhere.
 
-## Install
+## Getting started
 
-Requires Python 3.10 or newer, and git.
+Follow these six steps in order. Each shows the command and what you should see.
+
+### 1. Check your prerequisites
+
+You need Python 3.10 or newer, and git.
 
 ```sh
+python --version
+git --version
+```
+
+```
+Python 3.12.3
+git version 2.43.0
+```
+
+If `python` is not found, try `python3`. If your Python is older than 3.10, install a
+newer one before continuing; Vouchcode uses syntax that older versions cannot parse.
+
+### 2. Install Vouchcode
+
+Clone this repository, then install it in editable mode.
+
+```sh
+git clone https://github.com/sudais-khalid/VOUCHCODE.git
+cd VOUCHCODE
 pip install -e ".[dev]"
 ```
 
-## Quickstart
+```
+Successfully installed vouchcode-0.1.0
+```
+
+Confirm it is on your path:
 
 ```sh
-cd your-repository
+vouchcode about
+```
+
+```
+Vouchcode 0.1.0
+Local-first cryptographic provenance and comprehension verification for AI-assisted development
+author: Muhammad Sudais Khalid (https://sudaiskhalid.com)
+repository: https://github.com/sudais-khalid/VOUCHCODE
+```
+
+### 3. Initialize a repository
+
+Change into any git repository you want to track, then initialize.
+
+```sh
+cd /path/to/your-repository
 vouchcode init
 ```
 
-`init` installs three git hooks, creates `.vouchcode/ledger.json`, and generates a local
-Ed25519 signing key.
+```
+hook installed: .git/hooks/pre-commit
+hook installed: .git/hooks/post-commit
+hook installed: .git/hooks/post-merge
+ledger ready: .vouchcode/ledger.json
+initialized: /path/to/your-repository
+```
 
-Then commit as usual. When a commit contains code attributed to AI generation, Vouchcode
-shows you that code and asks you to account for it before the commit completes:
+This installs three git hooks, creates the ledger, and generates a local Ed25519 signing
+key. Everything lives in `.vouchcode/`, which you should add to your `.gitignore`. Running
+`init` again is safe and never replaces an existing key.
 
-```console
-$ git commit -m "Add record normalizer"
+### 4. Make a commit
 
+Commit as you normally would.
+
+```sh
+git add .
+git commit -m "Add record normalizer"
+```
+
+If the commit contains code attributed to AI generation, Vouchcode shows you that code and
+asks you to account for it before the commit completes:
+
+```
 +------------------- records.py: normalize_records -------------------+
 | def normalize_records(records, strict):                             |
 |     if records is None:                                             |
@@ -60,56 +127,91 @@ answer: raises ValueError because it cannot work without records
   correct, score 0.94: answer relates the condition to the outcome the code produces
 ```
 
-Answer poorly and the commit is refused, with `git commit --no-verify` available to record
-it as explicitly unverified. A commit made with no terminal attached is recorded as
-skipped, never as passed.
+Answer poorly and the commit is refused. `git commit --no-verify` records it as
+explicitly unverified rather than blocking you. A commit made with no terminal attached,
+such as from a script, is recorded as skipped and never as passed.
 
-Then produce and check the portable artifact:
+Check that the ledger recorded it:
 
-```console
-$ vouchcode report -o out
+```sh
+vouchcode log --limit 3
+```
+
+```
+commit      type    timestamp                  attribution   files  author
+4edeb29b7f  commit  2026-08-20T08:15:48+00:00  mixed             1  Sudais Khalid
+```
+
+### 5. Generate a report
+
+```sh
+vouchcode report -o out
+```
+
+```
 json report: out/vouchcode-report.json
 pdf report: out/vouchcode-report.pdf
 signing key fingerprint: 7D7C BBC8 6885 009B B043 59D0 F26E E03E
-
-$ vouchcode verify
-verified: 51
-chain intact
+publish this fingerprint where a recipient can obtain it independently of this report
 ```
 
-A recipient checks the report without installing anything:
+The JSON is machine-readable and signed. The PDF is what you hand to a supervisor or a
+hiring manager. Anyone can check the JSON without installing Vouchcode, using a standard
+Ed25519 implementation.
 
-```console
-$ vouchcode verify-report out/vouchcode-report.json --expect-fingerprint "7D7C BBC8 6885 009B B043 59D0 F26E E03E"
-signature: valid
-fingerprint: matches
-report verified and signed by the expected key
+### 6. Run the gate locally, before you touch CI
+
+```sh
+vouchcode gate --base-ref main
 ```
 
-## Verifying this repository
+```
+vouchcode gate
+base ref: main
+commits in range: 1
+commits found in ledger: 1
+minimum confidence: 0.90
+comprehension required: yes
+gated hunks: 1
 
-This repository signs its own provenance reports. The signing key fingerprint is:
+FAIL  27f705b8da  generated.py:normalize  ai via tool_signal conf 1.00  comprehension: not_evaluated
+
+result: fail, 1 of 1 gated hunks lack a passing comprehension record
+```
+
+Exit code 1 means AI-attributed code in this range has no passing comprehension record.
+Exit code 0 means it does, or that there was nothing to gate. Once this behaves the way
+you expect locally, copy `.github/workflows/vouchcode-gate.yml` from this repository into
+yours to run it on every pull request.
+
+## Signing key fingerprint
+
+This repository's reports are signed with an Ed25519 key whose fingerprint is:
 
 ```
 7D7C BBC8 6885 009B B043 59D0 F26E E03E
 ```
 
+This should match the fingerprint shown in any report generated from this repository. It
+is also published independently of this repository, so that a verifier can obtain it by a
+route the repository's owner does not control.
+
 `reports/vouchcode-self-report.json` is a real report over this repository's own history.
-To check it:
+Check it with:
 
 ```sh
 vouchcode verify-report reports/vouchcode-self-report.json --expect-fingerprint "7D7C BBC8 6885 009B B043 59D0 F26E E03E"
 ```
 
-The fingerprint above is published here, in the repository, deliberately. A fingerprint a
-verifier only ever sees inside the report it is meant to authenticate proves nothing,
-because a forged report carries a forged key and a fingerprint matching it perfectly. This
-copy is the independent one. Compare it against whatever report you were handed.
+The comparison is the point. A fingerprint a verifier only ever sees inside the report it
+is meant to authenticate proves nothing, because a forged report carries a forged key and
+a fingerprint matching it perfectly. Print your own with `vouchcode key`.
 
 ## Commands
 
 | Command | Purpose |
 | --- | --- |
+| `vouchcode about` | Print the project, author, and repository. |
 | `vouchcode init` | Install hooks, create the ledger, generate the signing key. |
 | `vouchcode status` | Report hook state and ledger size. Non-zero exit if a hook is inactive. |
 | `vouchcode log` | Print ledger entries. `--json` for machine-readable output. |
@@ -117,6 +219,8 @@ copy is the independent one. Compare it against whatever report you were handed.
 | `vouchcode verify` | Recheck every hash and signature, reporting per entry. |
 | `vouchcode report` | Compile a signed JSON report and a PDF summary. |
 | `vouchcode verify-report` | Check a report's signature and, with `--expect-fingerprint`, its key. |
+| `vouchcode gate` | Fail a build when AI-attributed code lacks a passing comprehension record. |
+| `vouchcode badge` | Generate a local status badge SVG from the ledger. |
 | `vouchcode scan` | Reconstruct a best-effort ledger from existing history. |
 | `vouchcode uninstall` | Remove the hooks. The ledger is retained. |
 
@@ -171,6 +275,13 @@ and it can in principle be defeated by someone who reads the scoring logic and c
 an answer to satisfy it. Someone who reasons to the right answer without reading the code
 also defeats it. This is partial mitigation, not a solution.
 
+**The gate acts on evidence, not inference.** `vouchcode gate` defaults to a confidence
+threshold of 0.9, which covers direct tool signals and structural proof and deliberately
+excludes stylometry. On a repository with no assistant integration writing signal files,
+the gate will pass almost everything. That is honest rather than useless: it enforces
+accountability for code known to be AI-generated, and does not pretend to detect
+AI-generated code nobody reported.
+
 **Merge commits are excluded from comprehension scoring** by decision, recorded explicitly
 on each entry rather than left as an empty field. A merge introduces no independently
 authored logic; the commits it joins carry their own entries.
@@ -183,10 +294,9 @@ verification. A missing tag is treated as non-comparable, never as comparable.
 
 **A signature proves consistency, not identity.** Anyone can generate a key, write a
 ledger, and sign a report with it, and that report verifies perfectly. **The fingerprint
-comparison is what a verifier actually depends on for trust, not the signature.** Run
-`vouchcode key` and publish the result somewhere a recipient can reach independently of
-any report you send. A verifier who only checks the signature has learned that the
-document is unaltered and nothing about who produced it.
+comparison is what a verifier actually depends on for trust, not the signature.** A
+verifier who only checks the signature has learned that the document is unaltered and
+nothing about who produced it.
 
 **Retroactive scans are reconstruction, not observation.** `scan` marks every entry
 `capture: retroactive_scan`, uses stylometry alone, and never records a comprehension
@@ -213,8 +323,9 @@ hook. CI runs the same four commands across Python 3.10 through 3.13 on Linux an
 Windows, with `ruff` and `mypy` pinned so a build's result depends on the diff rather than
 on upstream release dates.
 
-The full system design, methodology, threat model, and evaluation strategy are in
-`Documentation/Vouchcode_Research_Documentation.docx`.
+`docs/RESEARCH_PAPER.md` describes the system and its evaluation in academic form,
+including the adversarial per-phase methodology used to build it. The original design
+document is `Documentation/Vouchcode_Research_Documentation.docx`.
 
 ## License
 
