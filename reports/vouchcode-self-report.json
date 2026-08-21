@@ -1,6 +1,6 @@
 {
   "report_version": 1,
-  "generated_at": "2026-08-20T15:17:52+00:00",
+  "generated_at": "2026-08-21T10:15:51+00:00",
   "repository": "E:\\VOUCHCODE",
   "commit_range": "full history",
   "signing_key": {
@@ -11,7 +11,7 @@
   },
   "verification_notice": "Verifying this report's signature proves that its contents have not been altered since it was signed by the holder of the key below. It does not prove who that holder is. Anyone can generate a key and sign a report with it. To establish identity, compare the key fingerprint below against a copy of the same fingerprint obtained independently of this report, for example one published in the developer's repository or profile at an earlier date. Matching fingerprints mean the same key produced both. Differing fingerprints mean this report was not signed by the key you expected.",
   "summary": {
-    "commits": 51,
+    "commits": 53,
     "merges": 0,
     "retroactive_commits": 50,
     "hunks_total": 736,
@@ -45,7 +45,7 @@
       "pass_rate": null,
       "by_status": {
         "excluded_retroactive": 50,
-        "not_required": 1
+        "not_required": 3
       }
     }
   },
@@ -23165,7 +23165,96 @@
       "previous_hash": "ad8a7301403270268c956cee34eed2a2df9ed30c57408841a304f9cd83bb567d",
       "entry_hash": "c64ea0e32a8f75815d5827a46bcf87f980706db46bf78e61b7b62a9f1308dbed",
       "signature": "Uib0JUzVKmhav5nqiFGaGZt8Pf6KhPfXOJrr3Zuz00sJz8UyTErkatoc+G2Tgo+HPArhy6WG7MErVwL2kvcEDQ=="
+    },
+    {
+      "commit": "a856c096fbc08eae0c0d27f489a36824198dd4a9",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-20T15:22:00+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "065f9bb7c254f4e2028ddd5be6ebe8506444e39a"
+      ],
+      "files": [
+        "reports/vouchcode-self-report.json",
+        "reports/vouchcode-self-report.pdf"
+      ],
+      "attribution": {
+        "status": "unclassified",
+        "source": null,
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 0,
+          "human_hunks": 0,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.0
+        }
+      },
+      "hunks": [],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_required",
+        "rationale": "no hunk in this commit was attributed to AI generation, so there was nothing to verify comprehension of"
+      },
+      "previous_hash": "c64ea0e32a8f75815d5827a46bcf87f980706db46bf78e61b7b62a9f1308dbed",
+      "entry_hash": "bbebeb54d8f7d4cf189c87d5b9862af32882ac65edecfae7e4d8395fb2b796e0",
+      "signature": "nc/NpCWMf/VU6wD5tKreHb8QkEz5SCOWmtI9swhZ15ZT9V8Bs71UQQmJhuug41AUJtMQgziIHDtcz4ocpvudDQ=="
+    },
+    {
+      "commit": "ff6b66f5578349903c1cb245e6c174369557c7dd",
+      "type": "commit",
+      "capture": "live",
+      "timestamp": "2026-08-20T15:59:03+00:00",
+      "author": {
+        "name": "Sudais Khalid",
+        "email": "msudaiskhalid.ai@gmail.com"
+      },
+      "branch": "main",
+      "parents": [
+        "a856c096fbc08eae0c0d27f489a36824198dd4a9"
+      ],
+      "files": [
+        "README.md"
+      ],
+      "attribution": {
+        "status": "unclassified",
+        "source": null,
+        "confidence": null,
+        "detail": {
+          "ai_hunks": 0,
+          "human_hunks": 0,
+          "mixed_hunks": 0,
+          "unclassified_hunks": 0,
+          "unchanged_hunks": 0,
+          "ai_line_share": 0.0
+        }
+      },
+      "hunks": [],
+      "fingerprint_version": {
+        "algorithm": 1,
+        "python": "3.13",
+        "ast_signature": "2105ed5284f42fad"
+      },
+      "skipped": [],
+      "comprehension": {
+        "status": "not_required",
+        "rationale": "no hunk in this commit was attributed to AI generation, so there was nothing to verify comprehension of"
+      },
+      "previous_hash": "bbebeb54d8f7d4cf189c87d5b9862af32882ac65edecfae7e4d8395fb2b796e0",
+      "entry_hash": "ae7550a6d2b6488408ec70b48c4f17a8f7f6354989824beb867a317a41712b91",
+      "signature": "Cn+J8IhIslRdHp22mAw4YS22tkwVw3IZL61KsuUM1EZsY/E5pTaWqB9U776sSqYOgw6GJc/kp8zHyc4Z0a/1AA=="
     }
   ],
-  "report_signature": "k9KOVnCYnfxK593WUoEc6seO3bIflHBX68c+FkCfXEdoAgjNBNbcvWAgSgk0KT1NYRsiBsN5t1zNWezXtnvtDQ=="
+  "report_signature": "IsGvpTBnBUCwzadVQFH8zN35La8+Xjm+lPhLBg98Oj17wtBESpJjHn/GeC3MvXsPFcc8IUmh0+lcojTV7pZHDg=="
 }
